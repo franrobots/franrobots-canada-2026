@@ -24,8 +24,9 @@ void loop() {
   //  delay(3000);
   // }
   
+  // servoKit.dropServoKit(2, 800, true, true);
   servoKit.testServoCicle(300, 3000, true);
-  servoKit.dropServoKit(2, 800, true, true);
+  delay(3000);
 }
 
 // Serial.available() > 0

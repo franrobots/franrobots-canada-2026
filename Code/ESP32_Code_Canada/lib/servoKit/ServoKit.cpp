@@ -49,17 +49,15 @@ void ServoKit::shakeServo(int actualPoint, int shakes, int timeShake, int degree
 
 void ServoKit::dropServoKit(int kits, int time, bool shake, bool toLeft) {
 
-  const int side = toLeft ? _mid : _right;
+  const int side = toLeft ? _right : _left;
   
   for(byte i = 0; i < kits; i++) {
-    Serial.println(side);
     _servo.write(side);
     delay(time);
 
-    if (shake) shakeServo(_left, 30, 60, 5);
+    if (shake) shakeServo(side, 30, 60, 5);
 
-    Serial.println(_mid);
     _servo.write(_mid);
-    if (kits > 1) delay(time);
+    delay(time);
   }
 }
