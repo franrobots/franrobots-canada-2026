@@ -7,6 +7,8 @@ class ServoKit {
   public:
     bool begin(int);
     void testServoCicle(int, int, bool);
+    void testServoAngle(bool);
+
     void dropServoKit(int, int, bool, bool);
 
   private:

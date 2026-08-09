@@ -18,14 +18,9 @@ void setup() {
 }
 
 void loop() {
-  // for (int i = 90; i <= 270; i+=10) {
-  //  Serial.println(i);
-  //  servo.write(i);
-  //  delay(3000);
-  // }
-  
   // servoKit.dropServoKit(2, 800, true, true);
-  servoKit.testServoCicle(300, 3000, true);
+  // servoKit.testServoCicle(300, 3000, true);
+  servoKit.testServoAngle(true);
   delay(3000);
 }
 
