@@ -3,10 +3,6 @@
 
 ServoKit servoKit;
 
-// int left = 150;
-// int mid = 90;
-// int right = 30;
-
 const int SERVO_PIN = 5;
 
 void setup() {
@@ -20,8 +16,8 @@ void setup() {
 void loop() {
   // servoKit.dropServoKit(2, 800, true, true);
   // servoKit.testServoCicle(300, 3000, true);
+  servoKit.testServoAngle(false);
   servoKit.testServoAngle(true);
-  delay(3000);
 }
 
 // Serial.available() > 0

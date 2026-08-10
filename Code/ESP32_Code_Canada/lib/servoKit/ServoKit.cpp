@@ -68,16 +68,16 @@ void ServoKit::shakeServo(int actualPoint, int shakes, int timeShake, int degree
 /// @param toLeft 
 void ServoKit::testServoAngle(bool toLeft) {
   if (toLeft) {
-    for (byte i = 90; i <= 270; i+=10) {
+    for (byte i = 90; i <= 180; i+=10) {
       Serial.println(i);
       _servo.write(i);
-      delay(2500);
+      delay(1000);
     }
   } else {
     for (byte i = 90; i >= 10; i-=10) {
       Serial.println(i);
       _servo.write(i);
-      delay(2500);
+      delay(1000);
     }
   }
 }
