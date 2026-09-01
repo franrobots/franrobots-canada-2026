@@ -1,11 +1,9 @@
 # V1.3.2-Beta: pooling fps, optmizing code
-import sensor
-import ml
-import uos
-import gc
-import time
+import sensor, ml, uos, gc, time, pyb
+from machine import LED
 clock = time.clock()
 
+# -------------- inicialization --------------
 sensor.reset()
 sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QQVGA)
@@ -16,7 +14,9 @@ sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
 sensor.set_auto_exposure(False)
 
-# net = ml.Model("main.tflite")
+ledB = LED("LED_BLUE")
+
+# -------------- Machine Learning --------------
 try:
     # load the model, alloc the model file on the heap if we have at least 64K free after loading
     net = ml.Model("main.tflite", load_to_fb=uos.stat('main.tflite')[6] > (gc.mem_free() - (64*1024)))
@@ -28,6 +28,7 @@ labels = [line.rstrip("\n") for line in open("labels.txt")]
 label = None
 confidence = None
 
+# -------------- Calibration --------------
 # Thresholds LAB
 thresholds = {
     "black": (2, 10, -11, 10, 1, 10),
@@ -64,6 +65,32 @@ directions = [
     (0, 1),   # Top
     (0, -1),  # Bottom
 ]
+
+# -------------- I2C Protocol --------------
+# Cam Left
+I2C_ADDR = 0x12
+
+bus = pyb.I2C(2, pyb.I2C.SLAVE, addr=I2C_ADDR)
+
+buffer = bytearray([0, 0])  # [valor identificado, confiabilidade]
+
+
+def send_I2C():
+    try:
+        cmd = bus.recv(1, timeout=1000)
+        if cmd:
+            print("[I2C] Command Recieved:", hex(cmd[0]))
+            if cmd[0] == 0x00:
+                bus.send(buffer)
+                print("[I2C] Enviado:", buffer[0], buffer[1])
+                time.sleep_ms(30)
+                ledB.on()
+            else:
+                print(f"[I2C] Comando inválido: {cmd}")
+    except Exception as e:
+        pass
+
+# -------------- Color process --------------
 
 
 def read_color(x, y):
@@ -135,6 +162,8 @@ def detect_circle_victim(img):
         # print(colors)
         return validate_victims(colors)
 
+# -------------- Letter process --------------
+
 
 def detect_letter(img):
     prediction = net.predict([img])[0].flatten().tolist()
@@ -145,6 +174,9 @@ def detect_letter(img):
         return labels[max_index], prediction[max_index]
     return None, None
 
+
+# =======================================
+# ============== Main Loop ==============
 
 while True:
     clock.tick()

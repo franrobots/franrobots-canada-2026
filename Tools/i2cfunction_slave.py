@@ -3,11 +3,7 @@ import time
 
 I2C_ADDR = 0x12
 
-bus = pyb.I2C(
-    2,
-    pyb.I2C.SLAVE,
-    addr=I2C_ADDR
-)
+bus = pyb.I2C(2, pyb.I2C.SLAVE, addr=I2C_ADDR)
 
 buffer = bytearray([3, 87])
 
