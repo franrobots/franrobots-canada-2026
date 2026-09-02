@@ -25,8 +25,6 @@ except Exception as e:
     raise Exception('Failed to load "main.tflite", did you copy the .tflite and labels.txt file onto the mass-storage device? (' + str(e) + ')')
 
 labels = [line.rstrip("\n") for line in open("labels.txt")]
-label = None
-confidence = None
 
 # -------------- Calibration --------------
 # Thresholds LAB
@@ -38,6 +36,7 @@ thresholds = {
     "blue": (8, 25, -14, 6, -28, -5)
 }
 
+# --------- Victims Variables ---------
 # Color values
 color_values = {
     "black": -2,
@@ -46,6 +45,16 @@ color_values = {
     "green": 1,
     "blue": 2,
 }
+
+# Letter values
+letter_values = {
+    "omega": 0,
+    "psi": 1,
+    "phi": 2,
+}
+
+# Confidence to accept the victim
+MIN_CONFIDENCE = 87
 
 # votes used to set the ring color
 votes = {
@@ -109,10 +118,17 @@ def read_color(x, y):
 
 def validate_victims(colors):
     total_points = 0
+
     for color in (colors):
-        if color == "unknown": return None
+        if color == "unknown":
+            return [0, 0]
+
         total_points += color_values[color]
-    return [total_points, 0 <= total_points <= 2]
+
+    if 0 <= total_points <= 2:
+        return [total_points, 100]
+
+    return [0, 0]
 
 
 def detect_circle_victim(img):
@@ -161,6 +177,7 @@ def detect_circle_victim(img):
 
         # print(colors)
         return validate_victims(colors)
+    return [0, 0]
 
 # -------------- Letter process --------------
 
@@ -168,11 +185,14 @@ def detect_circle_victim(img):
 def detect_letter(img):
     prediction = net.predict([img])[0].flatten().tolist()
     max_index = prediction.index(max(prediction))
-    if labels[max_index] == "unknown":
-        return None, None
-    if prediction[max_index] > 0.87:
-        return labels[max_index], prediction[max_index]
-    return None, None
+
+    label = labels[max_index]
+    confidence = prediction[max_index]
+
+    if label == "unknown" or confidence <= MIN_CONFIDENCE / 100:
+        return [0, 0]
+
+    return [letter_values[label], int(confidence * 100)]
 
 
 # =======================================
@@ -182,11 +202,18 @@ while True:
     clock.tick()
     img = sensor.snapshot()
 
-    color_result = detect_circle_victim(img)
-    #if color_result:
-    print(color_result)
-    #else:
-    #    label, confidence = detect_letter(img)
-    #    if label:
-    #        print(label, confidence)
-    print(clock.fps())
+    # 1. Search for color victims
+    result = detect_circle_victim(img)
+
+    # 2. if not exists a valid vitcim color, search for ML
+    if not (0 <= result[0] <= 2 and result[1] > MIN_CONFIDENCE):
+        result = detect_letter(img)
+
+    # 3. buffer updates anyways
+    buffer[0] = result[0]
+    buffer[1] = result[1]
+
+    print("Resultado:", result)
+
+    send_I2C()
+    print("FPS:", clock.fps())

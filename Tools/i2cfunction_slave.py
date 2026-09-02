@@ -15,23 +15,11 @@ print("================================")
 while True:
 
     try:
-
         cmd = bus.recv(1, timeout=1000)
-
         if cmd:
-
             print("[I2C] Comando recebido:", hex(cmd[0]))
-
             if cmd[0] == 0x00:
-
                 bus.send(buffer)
-
-                print(
-                    "[I2C] Enviado:",
-                    buffer[0],
-                    buffer[1]
-                )
-
+                print("[I2C] Enviado:", buffer[0], buffer[1])
     except Exception as e:
-
         pass
