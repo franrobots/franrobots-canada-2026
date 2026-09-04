@@ -1,5 +1,6 @@
 # V1.3.2-Beta: pooling fps, optmizing code
 import sensor, ml, uos, gc, time, pyb
+from random import randint
 from machine import LED
 clock = time.clock()
 
@@ -92,8 +93,9 @@ def send_I2C():
             if cmd[0] == 0x00:
                 bus.send(buffer)
                 print("[I2C] Enviado:", buffer[0], buffer[1])
-                time.sleep_ms(30)
+                print("-------")
                 ledB.on()
+                time.sleep_ms(30)
             else:
                 print(f"[I2C] Comando inválido: {cmd}")
     except Exception as e:
@@ -210,10 +212,16 @@ while True:
         result = detect_letter(img)
 
     # 3. buffer updates anyways
-    buffer[0] = result[0]
-    buffer[1] = result[1]
+    # buffer[0] = result[0]
+    # buffer[1] = result[1]
 
-    print("Resultado:", result)
+    # Random for test I2C
+    buffer[0] = randint(0, 2)
+    buffer[1] = randint(50, 100)
+
+    # print("Resultado:", result)
 
     send_I2C()
-    print("FPS:", clock.fps())
+    ledB.off()
+    print(".")
+    # print("FPS:", clock.fps())
