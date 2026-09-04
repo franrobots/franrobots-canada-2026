@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include "config.h"
+
 #include <Wire.h>
 #include "ServoKit.h"
 #include "OpenMv.h"
@@ -6,16 +8,8 @@
 ServoKit servoKit;
 OpenMv openMv;
 
-// Pins and Address
-#define LED_PIN 2
-#define SERVO_PIN 5
-#define I2C_SDA 21
-#define I2C_SCL 22
-#define left_cam 0x12
-#define right_cam 0x14
-
+// Functions declarations
 void blinkLed(uint8_t);
-// constexpr uint8_t Servo_Pin = 5;
 
 void setup() {
   Serial.begin(115200);
@@ -29,7 +23,7 @@ void setup() {
 void loop() {
   // Query the victim
   delay(1000);
-  VictimResult result = openMv.getVictim(left_cam);
+  VictimResult result = openMv.getVictim(LEFT_CAM);
   Serial.println(result.value);
   Serial.println(result.confidence);
   Serial.println(result.isTrue);
@@ -39,7 +33,7 @@ void loop() {
     servoKit.dropServoKit(result.value, 800, true, true); 
   }
   else {
-    result = openMv.getVictim(right_cam);
+    result = openMv.getVictim(RIGHT_CAM);
 
     if (result.isTrue) {
       blinkLed(3);
