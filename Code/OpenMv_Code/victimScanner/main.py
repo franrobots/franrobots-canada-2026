@@ -212,12 +212,12 @@ while True:
         result = detect_letter(img)
 
     # 3. buffer updates anyways
-    # buffer[0] = result[0]
-    # buffer[1] = result[1]
+    buffer[0] = result[0]
+    buffer[1] = result[1]
 
-    # Random for test I2C
-    buffer[0] = randint(0, 2)
-    buffer[1] = randint(50, 100)
+    # Random for test I2C1
+    # buffer[0] = randint(0, 2)
+    # buffer[1] = randint(50, 100)
 
     # print("Resultado:", result)
 
