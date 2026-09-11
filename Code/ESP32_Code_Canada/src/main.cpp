@@ -1,27 +1,33 @@
 #include <Arduino.h>
 #include "config.h"
 
-#include <Wire.h>
 #include "ServoKit.h"
 #include "OpenMv.h"
+#include "EspLed.h"
 
 ServoKit servoKit;
 OpenMv openMv;
+EspLed espLed;
 
 // Functions declarations
-void blinkLed(uint8_t);
+void victimCicle();
 
 void setup() {
   Serial.begin(115200);
   openMv.begin(I2C_SDA, I2C_SCL, 100000);
   servoKit.begin(SERVO_PIN);
-  servoKit.dropServoKit(2, 800, false, true);
-  pinMode(LED_PIN, OUTPUT);
+  espLed.setPin(LED_PIN);
   delay(100);
+  Serial.println("God bless the round!");
 }
 
 void loop() {
-  // Query the victim
+  espLed.blinkLed(5, 800);
+  victimCicle();
+}
+
+void victimCicle() {
+    // Query the victim
   delay(1000);
   VictimResult result = openMv.getVictim(LEFT_CAM);
   Serial.println(result.value);
@@ -29,28 +35,15 @@ void loop() {
   Serial.println(result.isTrue);
 
   if (result.isTrue) {
-    blinkLed(3);
+    espLed.blinkLed(5, 800);
     servoKit.dropServoKit(result.value, 800, true, true); 
   }
   else {
     result = openMv.getVictim(RIGHT_CAM);
 
     if (result.isTrue) {
-      blinkLed(3);
+      espLed.blinkLed(5, 800);
       servoKit.dropServoKit(result.value, 800, true, false);
     }
-  }
-
-  // Serial.println("virando servo");
-  // servoKit.dropServoKit(2, 800, true, true);
-
-}
-
-void blinkLed(uint8_t times) {
-  for (byte i = 0; i < times; i++) {
-    digitalWrite(LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(LED_PIN, LOW);
-    delay(500);  
   }
 }
