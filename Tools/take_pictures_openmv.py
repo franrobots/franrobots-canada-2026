@@ -25,20 +25,19 @@ sensor.set_auto_exposure(False)
 NUM_FOTOS = 30
 INTERVALO_MS = 1000
 
-while True:
+img = sensor.snapshot()
+
+time.sleep_ms(1000)
+print("Capturando fotos...")
+
+for i in range(1, NUM_FOTOS + 1):
     img = sensor.snapshot()
+    nome_arquivo = "foto_%d.jpg" % i
+    img.save(nome_arquivo)
+    print("Foto salva:", nome_arquivo)
+    time.sleep_ms(INTERVALO_MS)
 
-    time.sleep_ms(1000)
-    print("Capturando fotos...")
+print("Captura finalizada.")
 
-    for i in range(1, NUM_FOTOS + 1):
-        img = sensor.snapshot()
-        nome_arquivo = "foto_%d.jpg" % i
-        img.save(nome_arquivo)
-        print("Foto salva:", nome_arquivo)
-        time.sleep_ms(INTERVALO_MS)
-
-    print("Captura finalizada.")
-
-    # print("FPS:", clock.fps())
-    gc.collect()
+# print("FPS:", clock.fps())
+gc.collect()
