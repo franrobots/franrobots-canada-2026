@@ -4,26 +4,40 @@
 #include "ServoKit.h"
 #include "OpenMv.h"
 #include "EspLed.h"
+#include "Motor.h"
 
 ServoKit servoKit;
 OpenMv openMv;
 EspLed espLed;
+Motor motor;
 
 // Functions declarations
 void victimCicle();
 
 void setup() {
   Serial.begin(115200);
-  openMv.begin(I2C_SDA, I2C_SCL, 100000);
-  servoKit.begin(SERVO_PIN);
   espLed.setPin(LED_PIN);
+  openMv.begin(I2C_SDA, I2C_SCL, 100000);  
+  servoKit.begin(SERVO_PIN);
+  // if (!servoKit.begin(SERVO_PIN))
+  // {
+  //   Serial.println("Erro ao iniciar servo.");
+  //   return;
+  // }
+
+  if (!motor.begin())
+  {
+    Serial.println("Erro ao configurar PWM dos motores.");
+    return;
+  }
+  Serial.println("Motor inicializado.");
+
   delay(100);
   Serial.println("God bless the round!");
 }
 
 void loop() {
-  espLed.blinkLed(5, 800);
-  victimCicle();
+  // victimCicle();
 }
 
 void victimCicle() {
