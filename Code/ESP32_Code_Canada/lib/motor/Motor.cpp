@@ -112,7 +112,21 @@ void Motor::moveTank(
     );
 }
 
+void Motor::turnLeft(int16_t speed)
+{
+    moveTank(-speed, speed);
+}
+
+void Motor::turnRight(int16_t speed)
+{
+    moveTank(speed, -speed);
+}
+
 void Motor::stop()
 {
     moveTank(0, 0);
 }
+
+// void Motor::pdcontrol(int16_t, int16_t, float, float, uint8_t) {
+//     // Needs BNO
+// }

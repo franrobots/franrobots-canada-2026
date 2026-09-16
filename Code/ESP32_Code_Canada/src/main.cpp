@@ -38,6 +38,21 @@ void setup() {
 
 void loop() {
   // victimCicle();
+  Serial.print("Movendo para frente.");
+  motor.moveTank(1638, 1638);
+  delay(500);
+  
+  Serial.print("Girando para esquerda.");
+  motor.turnLeft();
+  delay(500);
+  
+  Serial.print("Girando para direita.");
+  motor.turnRight();
+  delay(500);
+
+  Serial.print("Girando 180.");
+  motor.turnLeft();
+  motor.turnLeft();
 }
 
 void victimCicle() {
