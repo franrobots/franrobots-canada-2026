@@ -1,6 +1,10 @@
-// EMA Filter
-uint16_t EMAfilter(float alpha, uint16_t sensor) {
-  uint16_t EMA = ;
+// EMA Filter to gy (o ema é sempre igual, mas deve separar para guardar o OldEMA sempre da mesma coisa)
+uint16_t oldGyEMA = 0;
+
+uint16_t gyEMAfilter(float alpha, uint16_t gySensor) {
+  if (alpha > 1 || alpha < 0) alpha = 1;
+  oldGyEMA = oldGyEMA + alpha * (gySensor - oldGyEMA);
+  return oldGyEMA;
 }
 
 // GY sensors
