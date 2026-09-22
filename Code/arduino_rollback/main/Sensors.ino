@@ -1,10 +1,12 @@
-// EMA Filter to gy (o ema é sempre igual, mas deve separar para guardar o OldEMA sempre da mesma coisa)
-uint16_t oldGyEMA = 0;
-
-uint16_t gyEMAfilter(float alpha, uint16_t gySensor) {
+uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy) {
   if (alpha > 1 || alpha < 0) alpha = 1;
-  oldGyEMA = oldGyEMA + alpha * (gySensor - oldGyEMA);
-  return oldGyEMA;
+  if (isGy) {
+    oldEmaGy[index] = oldEmaGy[index] + alpha * (inputSensor - oldEmaGy[index]);
+    return oldEmaGy[index];
+  } else {
+    oldEmaRefletance[index] = oldEmaRefletance[index] + alpha * (inputSensor - oldEmaRefletance[index]);
+    return oldEmaRefletance[index];
+  }
 }
 
 // GY sensors
@@ -15,8 +17,12 @@ int read_sensors_pure(uint8_t index) {
 }
 
 //Reading sensors less offset
-int read_sensors(uint8_t index) {
- return read_sensors_pure(index) - dist_sensors_offsets[index];
+int read_sensors(uint8_t index, bool useEma) {
+  uint8_t calibrated_sensor = read_sensors_pure(index) - dist_sensors_offsets[index];
+  if (useEma) {
+    sensor_values[index] = emaFilter(alpha, index, calibrated_sensor, true);
+  }
+  return sensor_values[index];
 }
 
 // Activate GY sensor
@@ -55,7 +61,7 @@ void begin_gy() {
 
 // ------------------------------ Reflectance plate ---------------------------- // 
 
-void readColorSensors()
+void readColorSensors(bool useEma)
 {
   const uint8_t numReadings = 5;  // Número de amostras
   long sums[sensor_length] = {0}; // Vetor para acumular as leituras
@@ -72,6 +78,9 @@ void readColorSensors()
   for (uint8_t i = 0; i < sensor_length; i++)
   {
     sensor_values[i] = sums[i] / numReadings; // Calcula a média
+    if (useEma) {
+      sensor_values[i] = emaFilter(alpha, i, sensor_values[i], false);
+    }
   }
 }
 
@@ -228,12 +237,12 @@ bool release_kits(uint8_t reps, bool sideFlag) {
 //--------------------------- Verify Victms ----------------------------
 
 bool isValidVictim(bool sideLeft) {
-  if (side) { // Lado esquerdo
+  if (sideLeft) { // Lado esquerdo
     if (read_sensors(8) > max_victm_distance) {
       return false; // vitima inválida
     }
   }
-  if (!side) { // Lado direito
+  if (!sideLeft) { // Lado direito
     if (read_sensors(9) > max_victm_distance) {
       return false; // Vítima inválida
     }

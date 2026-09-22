@@ -214,14 +214,18 @@ int16_t sensor_values[sensor_length];
 // ---------------- GY Sensors ---------------- //
 const uint8_t N_SENSORS = 10;
 VL53L0X sensors[N_SENSORS];
-constexpr float alphaEMA = 0.2 // Valor entre 0 e 1
 
 //                                        0   1   2   3   4   5   6    7
-constexpr int dist_sensors_offsets[10] = {20, 35, 50, 58, 62, 42, 115, 72, 67, 67}; // positivo = aumenta; negativo = subtrai.
+constexpr int dist_sensors_offsets[N_SENSORS] = {20, 35, 50, 58, 62, 42, 115, 72, 67, 67}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
 constexpr uint16_t sensors_target_value[] = {36, 355, 660, 950}; // alignTile 1, 2, 3, 4
 
-// --------------------- verify Victms -------------------- // 
+// --------------------- EMA Filter -------------------- // 
+int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int oldEmaRefletance[sensor_length] = {0, 0, 0, 0};
+constexpr float alpha = 0.1;
+
+// --------------------- verify Victms -------------------- //
 constexpr uint8_t max_victm_distance = 117;
 
 BluetoothSerial SerialBT;
@@ -249,8 +253,10 @@ int16_t motorValueCorrection(int);
 void moveTank(int, int, bool);
 void stopTank();
 void pdControl(int16_t, int16_t, float, float, uint8_t);
-int read_sensors(uint8_t);
+uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy);
+int read_sensors(uint8_t, bool useEma = true);
 int read_sensors_pure(uint8_t);
+void readColorSensors(bool useEma = true);
 void tcaselect(uint8_t);
 void calibrate_dist_sensors();
 void init_gy();
@@ -369,7 +375,7 @@ void taskOnCore0(void *pvParameters) {
       return2init();
     }else{
         //blink_led(5, 3, true);
-        moveTile(); // principal
+        // moveTile(); // principal
         //beginLed();
         //getNextTileAngle();
         //walkByEncoder(30, true);
@@ -388,7 +394,7 @@ void taskOnCore0(void *pvParameters) {
         // printSensorsPure();
         // printSensors(); // Gy
         //printVector();
-        // printRefletanceResult();
+        printRefletanceResult();
       }
     }
     
