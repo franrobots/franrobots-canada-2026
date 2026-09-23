@@ -18,9 +18,11 @@ int read_sensors_pure(uint8_t index) {
 
 //Reading sensors less offset
 int read_sensors(uint8_t index, bool useEma) {
-  uint8_t calibrated_sensor = read_sensors_pure(index) - dist_sensors_offsets[index];
+  int calibrated_sensor = read_sensors_pure(index) - dist_sensors_offsets[index];
   if (useEma) {
     sensor_values[index] = emaFilter(alpha, index, calibrated_sensor, true);
+  } else {
+    sensor_values[index] = calibrated_sensor;
   }
   return sensor_values[index];
 }
@@ -78,9 +80,9 @@ void readColorSensors(bool useEma)
   for (uint8_t i = 0; i < sensor_length; i++)
   {
     sensor_values[i] = sums[i] / numReadings; // Calcula a média
-    if (useEma) {
-      sensor_values[i] = emaFilter(alpha, i, sensor_values[i], false);
-    }
+    // if (useEma) {
+    //   sensor_values[i] = emaFilter(alpha, i, sensor_values[i], false);
+    // }
   }
 }
 
@@ -209,6 +211,35 @@ int8_t convert_victim_code(uint8_t code) {
 
 // -------------------------- Release Kits -----------------------------
 
+void shakeServo(int actualPoint, int shakes, int timeShake, int degrees) {
+  for (byte i = 0; i < shakes; i++) {
+    servo.write(constrain(actualPoint + degrees, 0, 180));
+    delay(timeShake);
+
+    servo.write(constrain(actualPoint - degrees, 0, 180));
+    delay(timeShake);
+  }
+
+  // Back to the original point
+  servo.write(actualPoint);
+  delay(timeShake);
+}
+
+void dropServoKit(int kits, int time, bool shake, bool toLeft) {
+
+  const uint8_t side = toLeft ? KIT_RIGHT : KIT_LEFT;
+  
+  for(byte i = 0; i < kits; i++) {
+    servo.write(side);
+    delay(time);
+
+    if (shake) shakeServo(side, 30, 60, 5);
+
+    servo.write(KIT_CENTER);
+    delay(time);
+  }
+}
+
 bool release_kits(uint8_t reps, bool sideFlag) {
   if (!isValidVictim(sideFlag)) {return true;}
   Point ponto_atual = robot.getActualPoint();
@@ -217,17 +248,19 @@ bool release_kits(uint8_t reps, bool sideFlag) {
   // Se já lançou kit nesse tile ou valor inválido, sai
   if (reps >= 3 || robot.victimNodes.contains(currentTile)) return false;
 
-  uint8_t side = sideFlag ? KIT_RIGHT : KIT_LEFT; 
+  // uint8_t side = sideFlag ? KIT_RIGHT : KIT_LEFT; 
 
   // Pisca LED com a cor certa no lado certo
   blink_led(5, reps, sideFlag);
 
-  for (uint8_t i = 0; i < reps; i++) {
-    servo.write(side);
-    vTaskDelay(pdMS_TO_TICKS(700));
-    servo.write(KIT_CENTER);
-    vTaskDelay(pdMS_TO_TICKS(1500));
-  }
+  // for (uint8_t i = 0; i < reps; i++) {
+  //   servo.write(side);
+  //   vTaskDelay(pdMS_TO_TICKS(700));
+  //   servo.write(KIT_CENTER);
+  //   vTaskDelay(pdMS_TO_TICKS(1500));
+  // }
+
+  dropServoKit(reps, 800, true, !sideFlag);
 
   victimCounter++;
   robot.victimNodes.append(currentTile);

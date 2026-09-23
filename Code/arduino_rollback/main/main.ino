@@ -45,9 +45,9 @@
 #define SWITCHRIGHT 18
 #define SWITCHLEFT 2
 
-#define KIT_CENTER 85
-#define KIT_LEFT 54
-#define KIT_RIGHT 101
+#define KIT_CENTER 90
+#define KIT_LEFT 150
+#define KIT_RIGHT 30
 
 #define NEAR_WALL 180
 
@@ -223,7 +223,7 @@ constexpr uint16_t sensors_target_value[] = {36, 355, 660, 950}; // alignTile 1,
 // --------------------- EMA Filter -------------------- // 
 int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int oldEmaRefletance[sensor_length] = {0, 0, 0, 0};
-constexpr float alpha = 0.1;
+constexpr float alpha = 0.5;
 
 // --------------------- verify Victms -------------------- //
 constexpr uint8_t max_victm_distance = 117;
@@ -381,7 +381,6 @@ void taskOnCore0(void *pvParameters) {
         //walkByEncoder(30, true);
         //delay(10000);
         // alignTile();
-        // printReflectance();
         //SerialBT.println(getColor());
         //moveTank(100, 100, true);
         // blink_led(5, 3, true);
@@ -394,7 +393,8 @@ void taskOnCore0(void *pvParameters) {
         // printSensorsPure();
         // printSensors(); // Gy
         //printVector();
-        printRefletanceResult();
+        printReflectance();
+        // printRefletanceResult();
       }
     }
     

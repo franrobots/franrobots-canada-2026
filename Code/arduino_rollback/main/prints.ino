@@ -64,6 +64,7 @@ void printSensors() {
 
 // Reflectance plate 
 void printReflectance() {
+  Serial.println("ta funcionando.");
   // readColorSensors();
   // SerialBT.print("C9: ");   SerialBT.print(sensor_values[0]);
   // SerialBT.print(" | R: "); SerialBT.print(sensor_values[1]);
