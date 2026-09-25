@@ -72,7 +72,9 @@
 
 #define SDA_PIN 21
 #define SCL_PIN 22
-#define ENCODER_PIN 19
+
+#define ENCODER_C1 19
+#define ENCODER_C2 13
 
 #define noSwitch false // true sem  switch - false com switch 
 
@@ -164,7 +166,10 @@ const uint8_t motor_vector[motor_length] = { FORWARD_0, BACK_0, FORWARD_1, BACK_
 
 float lastencoder = 0;
 
-volatile uint32_t pulseCount = 0;
+volatile int32_t pulseCount = 0;
+byte Encoder_C1Last;
+boolean direction_m;
+
 portMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;
 uint8_t cont = 0;
 int8_t addcm = 0;
@@ -172,7 +177,25 @@ uint16_t addswitch = 0;
 constexpr uint8_t tile_cm = 30;
 
 void IRAM_ATTR encoderISR() {
-  pulseCount++;
+
+  int Lstate = digitalRead(ENCODER_C1);
+  
+  if(!Encoder_C1Last && Lstate) // Retira duplicação de pulso (1 para 0)
+  {
+    int val = digitalRead(ENCODER_C2);
+
+    if(!val && direction_m) direction_m = false;
+
+    else if(val && !direction_m) direction_m = true;
+
+  }
+
+  Encoder_C1Last = Lstate;
+
+  if(!direction_m)  pulseCount++;
+  else              pulseCount--;
+
+  
 }
 
 float Encoder() {
@@ -309,11 +332,12 @@ void setup() {
   Wire.setClock(800000); // 400.000
   SerialBT.begin("Fran Robots");
   stopTank();
-  pinMode(ENCODER_PIN, INPUT_PULLUP);
+  pinMode(ENCODER_C1, INPUT_PULLUP);
+  pinMode(ENCODER_C2, INPUT_PULLUP);
   pinMode(SWITCHLEFT, INPUT_PULLUP);
   pinMode(SWITCHRIGHT, INPUT_PULLUP);
   pinMode(BUTTON, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_PIN), encoderISR, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_C1), encoderISR, CHANGE);
   Serial.begin(115200);
   for (uint8_t i = 0; i < sensor_length; i++) pinMode(sensor_vector[i], INPUT);
   led.begin();
