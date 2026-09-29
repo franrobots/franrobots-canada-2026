@@ -61,7 +61,7 @@ void moveTile()
       robot.addVisitNodesTimes(robot.pointToIndex(ponto_atual));
     if (no){
       if (getColor() == "blue"){
-        robot.blueNodes.append(robot.pointToIndex(ponto_atual));
+        robot.blackNodes.append(robot.pointToIndex(ponto_atual)); // Considera o azul como preto, desconsiderando sua posição do mapa.
         stopTank();
         blink_led(5, 3, true);
         vTaskDelay(pdMS_TO_TICKS(1000));
