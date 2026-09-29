@@ -1,6 +1,6 @@
 # V1.3.2-Beta: pooling fps, optmizing code
 import sensor, ml, uos, gc, time, pyb
-from random import randint
+# from random import randint
 from machine import LED
 clock = time.clock()
 
@@ -34,9 +34,9 @@ labels = [line.rstrip("\n") for line in open("labels.txt")]
 thresholds = {
     "black": (0, 24, -21, 31, -5, 18),
     "red": (17, 39, -1, 48, 11, 40),
-    "yellow": (31, 64, -28, 25, 32, 54),
+    "yellow": (34, 68, -24, 25, 20, 54),
     "green": (22, 33, -34, -20, 16, 37),
-    "blue": (8, 25, -14, 6, -28, -5)
+    "blue": (23, 39, -20, 5, -40, -6)
 }
 
 # --------- Victims Variables ---------
@@ -143,9 +143,9 @@ def detect_circle_victim(img):
     img_binary.erode(1)
     img_binary.dilate(1)
 
-    circles = img_binary.find_circles(threshold=5000, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
+    circles = img_binary.find_circles(threshold=5500, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
     if not circles:
-        circles = img.find_circles(threshold=5000, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
+        circles = img.find_circles(threshold=5500, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
     if circles:
         c = max(circles, key=lambda c: c.r)
 
@@ -243,7 +243,7 @@ while True:
     # buffer[1] = randint(50, 100)
 
     send_I2C()
-    print(".")
-    # print("Result:", result)
+    # print(".")
+    print("Result:", result)
     gc.collect()
     # print("FPS:", clock.fps())
