@@ -135,10 +135,10 @@ bool camera_Identify(){
     if (xQueueReceive(cameraQueue, &vd, 0) == pdTRUE) {
       stopTank();
       if(vd.esq > 0 ) {
-        release_kits(convert_victim_code(vd.esq), false);  // false = lado esquerdo
+        release_kits(convert_victim_code(vd.esq), true);  // true = lado esquerdo
       }
       if(vd.dir > 0){
-        release_kits(convert_victim_code(vd.dir), true);  // true = lado direito
+        release_kits(convert_victim_code(vd.dir), false);  // false = lado direito
       }
       return true;
     }

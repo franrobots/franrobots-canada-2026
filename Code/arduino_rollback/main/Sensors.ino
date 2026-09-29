@@ -201,12 +201,13 @@ void led_clear() {
 
 // ---------------------- Conversão dos Códigos ------------------------
 
-int8_t convert_victim_code(uint8_t code) {
-  // Green = 1 ; Yellow = 2 ; Red = 3 ; U = 4 ; S = 5 ; H = 6
-  if (code == 1 || code == 4) return 0; // Verde ou U
-  else if (code == 2 || code == 5) return 1; // Amarelo ou S
-  else if (code == 3 || code == 6) return 2; // Vermelho ou H
-  return NULL; // Valor inválido (ignorar)
+uint8_t convert_victim_code(uint8_t code) {
+  switch (code) {
+    case 1: return 0; // stable
+    case 2: return 1; // harmed
+    case 3: return 2; // unharmed
+    default: return 255;
+  }
 }
 
 // -------------------------- Release Kits -----------------------------
@@ -227,7 +228,7 @@ void shakeServo(int actualPoint, int shakes, int timeShake, int degrees) {
 
 void dropServoKit(int kits, int time, bool shake, bool toLeft) {
 
-  const uint8_t side = toLeft ? KIT_RIGHT : KIT_LEFT;
+  const uint8_t side = toLeft ? KIT_LEFT : KIT_RIGHT;
   
   for(byte i = 0; i < kits; i++) {
     servo.write(side);
@@ -240,18 +241,18 @@ void dropServoKit(int kits, int time, bool shake, bool toLeft) {
   }
 }
 
-bool release_kits(uint8_t reps, bool sideFlag) {
-  if (!isValidVictim(sideFlag)) {return true;}
+bool release_kits(uint8_t reps, bool sideLeft) {
+  if (!isValidVictim(sideLeft)) {return false;}
   Point ponto_atual = robot.getActualPoint();
   uint16_t currentTile = robot.pointToIndex(ponto_atual);
 
   // Se já lançou kit nesse tile ou valor inválido, sai
   if (reps >= 3 || robot.victimNodes.contains(currentTile)) return false;
 
-  // uint8_t side = sideFlag ? KIT_RIGHT : KIT_LEFT; 
+  // uint8_t side = sideLeft ? KIT_RIGHT : KIT_LEFT; 
 
   // Pisca LED com a cor certa no lado certo
-  blink_led(5, reps, sideFlag);
+  blink_led(5, reps, sideLeft);
 
   // for (uint8_t i = 0; i < reps; i++) {
   //   servo.write(side);
@@ -260,7 +261,7 @@ bool release_kits(uint8_t reps, bool sideFlag) {
   //   vTaskDelay(pdMS_TO_TICKS(1500));
   // }
 
-  dropServoKit(reps, 800, true, !sideFlag);
+  dropServoKit(reps, 800, true, sideLeft);
 
   victimCounter++;
   robot.victimNodes.append(currentTile);
