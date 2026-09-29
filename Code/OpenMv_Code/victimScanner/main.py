@@ -10,6 +10,7 @@ sensor.set_pixformat(sensor.RGB565)
 sensor.set_framesize(sensor.QQVGA)
 sensor.set_hmirror(True)
 sensor.set_vflip(True)
+sensor.set_windowing((240, 240))
 sensor.skip_frames(time=2000)
 sensor.set_auto_gain(False)
 sensor.set_auto_whitebal(False)
@@ -20,10 +21,10 @@ ledB = LED("LED_BLUE")
 # -------------- Machine Learning --------------
 try:
     # load the model, alloc the model file on the heap if we have at least 64K free after loading
-    net = ml.Model("main.tflite", load_to_fb=uos.stat('main.tflite')[6] > (gc.mem_free() - (64*1024)))
+    net = ml.Model("trained.tflite", load_to_fb=uos.stat('trained.tflite')[6] > (gc.mem_free() - (64*1024)))
 except Exception as e:
     print(e)
-    raise Exception('Failed to load "main.tflite", did you copy the .tflite and labels.txt file onto the mass-storage device? (' + str(e) + ')')
+    raise Exception('Failed to load "trained.tflite", did you copy the .tflite and labels.txt file onto the mass-storage device? (' + str(e) + ')')
 
 labels = [line.rstrip("\n") for line in open("labels.txt")]
 
@@ -55,7 +56,7 @@ letter_values = {
 }
 
 # Confidence to accept the victim
-MIN_CONFIDENCE = 87
+MIN_CONFIDENCE = 70
 
 # votes used to set the ring color
 votes = {
@@ -78,28 +79,28 @@ directions = [
 
 # -------------- I2C Protocol --------------
 # Cam Left
-I2C_ADDR = 0x12
+I2C_ADDR = 0x11
 
 bus = pyb.I2C(2, pyb.I2C.SLAVE, addr=I2C_ADDR)
 
 buffer = bytearray([0, 0])  # [valor identificado, confiabilidade]
 
 
-def send_I2C():
-    try:
-        cmd = bus.recv(1, timeout=1000)
-        if cmd:
-            print("[I2C] Command Recieved:", hex(cmd[0]))
-            if cmd[0] == 0x00:
-                bus.send(buffer)
-                print("[I2C] Enviado:", buffer[0], buffer[1])
-                print("-------")
-                ledB.on()
-                time.sleep_ms(30)
-            else:
-                print(f"[I2C] Comando inválido: {cmd}")
-    except Exception as e:
-        pass
+# def send_I2C():
+#     try:
+#         cmd = bus.recv(1, timeout=10)
+#         if cmd:
+#             print("[I2C] Command Recieved:", hex(cmd[0]))
+#             if cmd[0] == 0x00:
+#                 bus.send(buffer)
+#                 print("[I2C] Enviado:", buffer[0], buffer[1])
+#                 print("-------")
+#                 ledB.on()
+#                 time.sleep_ms(30)
+#             else:
+#                 print(f"[I2C] Comando inválido: {cmd}")
+#     except Exception as e:
+#         pass
 
 # -------------- Color process --------------
 
@@ -191,10 +192,26 @@ def detect_letter(img):
     label = labels[max_index]
     confidence = prediction[max_index]
 
+    # print(label, confidence)
+
     if label == "unknown" or confidence <= MIN_CONFIDENCE / 100:
         return [0, 0]
 
     return [letter_values[label], int(confidence * 100)]
+
+
+def encode_victim_result(result):
+    value, confidence = result
+
+    # Do not recognize the victim
+    if confidence == 0:
+        return [0, 0]
+
+    # Valid victim:
+    # 0 kits/stable    -> 1
+    # 1 kit/harmed     -> 2
+    # 2 kits/unharmed  -> 3
+    return [value + 1, confidence]
 
 
 # =======================================
@@ -211,6 +228,7 @@ while True:
     if not (0 <= result[0] <= 2 and result[1] > MIN_CONFIDENCE):
         result = detect_letter(img)
 
+    result = encode_victim_result(result)
     # 3. buffer updates anyways
     buffer[0] = result[0]
     buffer[1] = result[1]
@@ -219,9 +237,9 @@ while True:
     # buffer[0] = randint(0, 2)
     # buffer[1] = randint(50, 100)
 
-    # print("Resultado:", result)
+    print("Result:", result)
 
-    send_I2C()
+    # send_I2C()
     ledB.off()
-    print(".")
+    # print(".")
     # print("FPS:", clock.fps())
