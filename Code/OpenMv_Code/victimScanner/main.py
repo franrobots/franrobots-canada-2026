@@ -17,6 +17,7 @@ sensor.set_auto_whitebal(False)
 sensor.set_auto_exposure(False)
 
 ledB = LED("LED_BLUE")
+ledR = LED("LED_RED")
 
 # -------------- Machine Learning --------------
 try:
@@ -31,10 +32,10 @@ labels = [line.rstrip("\n") for line in open("labels.txt")]
 # -------------- Calibration --------------
 # Thresholds LAB
 thresholds = {
-    "black": (2, 10, -11, 10, 1, 10),
-    "red": (8, 16, -6, 28, 9, 21),
-    "yellow": (74, 93, -18, 7, 25, 58),
-    "green": (10, 22, -27, -12, -5, 22),
+    "black": (0, 24, -21, 31, -5, 18),
+    "red": (17, 39, -1, 48, 11, 40),
+    "yellow": (31, 64, -28, 25, 32, 54),
+    "green": (22, 33, -34, -20, 16, 37),
     "blue": (8, 25, -14, 6, -28, -5)
 }
 
@@ -86,21 +87,21 @@ bus = pyb.I2C(2, pyb.I2C.SLAVE, addr=I2C_ADDR)
 buffer = bytearray([0, 0])  # [valor identificado, confiabilidade]
 
 
-# def send_I2C():
-#     try:
-#         cmd = bus.recv(1, timeout=10)
-#         if cmd:
-#             print("[I2C] Command Recieved:", hex(cmd[0]))
-#             if cmd[0] == 0x00:
-#                 bus.send(buffer)
-#                 print("[I2C] Enviado:", buffer[0], buffer[1])
-#                 print("-------")
-#                 ledB.on()
-#                 time.sleep_ms(30)
-#             else:
-#                 print(f"[I2C] Comando inválido: {cmd}")
-#     except Exception as e:
-#         pass
+def send_I2C():
+    try:
+        cmd = bus.recv(1, timeout=100)
+        if cmd:
+            print("[I2C] Command Recieved:", hex(cmd[0]))
+            if cmd[0] == 0x00:
+                bus.send(buffer)
+                print("[I2C] Enviado:", buffer[0], buffer[1])
+                print("-------")
+                ledB.on()
+                time.sleep_ms(30)
+            else:
+                print(f"[I2C] Comando inválido: {cmd}")
+    except Exception as e:
+        pass
 
 # -------------- Color process --------------
 
@@ -142,9 +143,9 @@ def detect_circle_victim(img):
     img_binary.erode(1)
     img_binary.dilate(1)
 
-    circles = img_binary.find_circles(threshold=5000, r_min=50, r_max=95, x_margin=35, y_margin=35, r_margin=12)
+    circles = img_binary.find_circles(threshold=5000, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
     if not circles:
-        circles = img.find_circles(threshold=5000, r_min=50, r_max=95, x_margin=35, y_margin=35, r_margin=12)
+        circles = img.find_circles(threshold=5000, r_min=40, r_max=95, x_margin=35, y_margin=35, r_margin=12)
     if circles:
         c = max(circles, key=lambda c: c.r)
 
@@ -219,6 +220,8 @@ def encode_victim_result(result):
 
 while True:
     clock.tick()
+    ledB.off()
+    ledR.off()
     img = sensor.snapshot()
 
     # 1. Search for color victims
@@ -229,6 +232,8 @@ while True:
         result = detect_letter(img)
 
     result = encode_victim_result(result)
+    if result[0] > 0: ledR.on()
+
     # 3. buffer updates anyways
     buffer[0] = result[0]
     buffer[1] = result[1]
@@ -237,9 +242,8 @@ while True:
     # buffer[0] = randint(0, 2)
     # buffer[1] = randint(50, 100)
 
-    print("Result:", result)
-
-    # send_I2C()
-    ledB.off()
-    # print(".")
+    send_I2C()
+    print(".")
+    # print("Result:", result)
+    gc.collect()
     # print("FPS:", clock.fps())
