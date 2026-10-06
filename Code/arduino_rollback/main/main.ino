@@ -1,4 +1,4 @@
-#include <Arduino.h> //
+#include <Arduino.h> // rollback (nosso mesmo)
 #include <Adafruit_Sensor.h> //
 #include <Adafruit_BNO055.h> //
 //#include "Adafruit_VL53L0X.h" //
@@ -399,7 +399,7 @@ void taskOnCore0(void *pvParameters) {
       return2init();
     }else{
         //blink_led(5, 3, true);
-        // moveTile(); // principal
+        moveTile(); // principal
         //beginLed();
         //getNextTileAngle();
         //walkByEncoder(30, true);
@@ -417,7 +417,7 @@ void taskOnCore0(void *pvParameters) {
         // printSensorsPure();
         // printSensors(); // Gy
         //printVector();
-        printReflectance();
+        // printReflectance();
         // printRefletanceResult();
       }
     }
