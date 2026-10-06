@@ -1,4 +1,7 @@
-#include <Arduino.h> // rollback (nosso mesmo)
+// rollback (nosso mesmo)
+// Código encoder com C1 e C2
+
+#include <Arduino.h>
 #include <Adafruit_Sensor.h> //
 #include <Adafruit_BNO055.h> //
 //#include "Adafruit_VL53L0X.h" //
@@ -17,25 +20,26 @@
 #include <freertos/queue.h>
 
 // Motor da Frente - Esquerda - 0
-#define FORWARD_0 11
-#define BACK_0 10
-#define LEFT_MOTOR_1_0 32
-#define LEFT_MOTOR_2_0 33 
+#define FORWARD_0 2
+#define BACK_0 3
+#define LEFT_MOTOR_1_0 25
+#define LEFT_MOTOR_2_0 26
 // Motor de Trás - Esquerda - 1
-#define FORWARD_1 2 //2
-#define BACK_1 3    //3
-#define LEFT_MOTOR_1_1 26  
-#define LEFT_MOTOR_2_1 25  
+#define FORWARD_1 10
+#define BACK_1 11
+#define LEFT_MOTOR_1_1 33
+#define LEFT_MOTOR_2_1 32 
 // Motor de Trás - Direita - 2
 #define FORWARD_2 4   //4
 #define BACK_2 5      //5
-#define RIGHT_MOTOR_1_2 27 
-#define RIGHT_MOTOR_2_2 16
+#define RIGHT_MOTOR_1_2 16 
+#define RIGHT_MOTOR_2_2 17
 // Motor da Frente - Direita - 3
 #define FORWARD_3 6   //6
 #define BACK_3 7      //7
-#define RIGHT_MOTOR_1_3 17
+#define RIGHT_MOTOR_1_3 27
 #define RIGHT_MOTOR_2_3 12
+
 // Velocity to control motors
 #define MIN_PWM 100
 #define MAX_PWM 255
@@ -61,8 +65,7 @@
 #define N_LEDS 11
 #define BUTTON 4 // 12
 
-#define TCAADDR1 0x70
-#define TCAADDR2 0x71
+#define TCAADDR 0x70
 
 #define BNO055_ADDR 0x28
 #define GY_ADDR 0x29
@@ -192,9 +195,8 @@ void IRAM_ATTR encoderISR() {
 
   Encoder_C1Last = Lstate;
 
-  if(!direction_m)  pulseCount++;
-  else              pulseCount--;
-
+  if(!direction_m)  pulseCount--;
+  else              pulseCount++;
   
 }
 
@@ -235,16 +237,16 @@ const uint8_t sensor_vector[sensor_length] = { SENSOR_c9, SENSOR_ldrR, SENSOR_ld
 int16_t sensor_values[sensor_length];
 
 // ---------------- GY Sensors ---------------- //
-const uint8_t N_SENSORS = 10;
+const uint8_t N_SENSORS = 8;
 VL53L0X sensors[N_SENSORS];
 
-//                                        0   1   2   3   4   5   6    7
-constexpr int dist_sensors_offsets[N_SENSORS] = {20, 35, 50, 58, 62, 42, 115, 72, 67, 67}; // positivo = aumenta; negativo = subtrai.
+//                                                0   1   2   3   4   5   6    7
+constexpr int dist_sensors_offsets[N_SENSORS] = {20, 35, 50, 58, 62, 42, 115, 72}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
 constexpr uint16_t sensors_target_value[] = {36, 355, 660, 950}; // alignTile 1, 2, 3, 4
 
 // --------------------- EMA Filter -------------------- // 
-int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0};
 int oldEmaRefletance[sensor_length] = {0, 0, 0, 0};
 constexpr float alpha = 0.5;
 
@@ -406,7 +408,7 @@ void taskOnCore0(void *pvParameters) {
         //delay(10000);
         // alignTile();
         //SerialBT.println(getColor());
-        //moveTank(100, 100, true);
+        // moveTank(255, 255, true);
         // blink_led(5, 3, true);
         //printCam();
         //delay(10000);

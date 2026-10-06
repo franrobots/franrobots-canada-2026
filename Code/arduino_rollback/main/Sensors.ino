@@ -28,21 +28,13 @@ int read_sensors(uint8_t index, bool useEma) {
 }
 
 // Activate GY sensor
+// Activate GY sensor
 void tcaselect(uint8_t i) {
-  if (i > N_SENSORS) return;
-
-  if (i < 7) {
-    Wire.beginTransmission(TCAADDR1);
-    Wire.write(1 << i);
-    Wire.endTransmission();
-    delayMicroseconds(300);
-  } else if (i > 7 && i < 10) {
-    uint8_t j = (i == 8) ? 0 : 1;
-    Wire.beginTransmission(TCAADDR2);
-    Wire.write(1 << j);
-    Wire.endTransmission();
-    delayMicroseconds(300);
-  } else return;
+  if (i >= N_SENSORS) return;
+  Wire.beginTransmission(TCAADDR);
+  Wire.write(1 << i);
+  Wire.endTransmission();
+  delayMicroseconds(300);  
 }
 
 void begin_gy() {
@@ -272,12 +264,12 @@ bool release_kits(uint8_t reps, bool sideLeft) {
 
 bool isValidVictim(bool sideLeft) {
   if (sideLeft) { // Lado esquerdo
-    if (read_sensors(8) > max_victm_distance) {
+    if (read_sensors(1) && read_sensors(2) > max_victm_distance) {
       return false; // vitima inválida
     }
   }
   if (!sideLeft) { // Lado direito
-    if (read_sensors(9) > max_victm_distance) {
+    if (read_sensors(5) && read_sensors(6) > max_victm_distance) {
       return false; // Vítima inválida
     }
   }

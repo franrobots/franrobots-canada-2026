@@ -146,28 +146,6 @@ bool camera_Identify(){
     return false;
 }
 
-// bool walkByEncoder(long cm, bool flag) {
-//   lastencoder = Encoder(); // ZERA no começo
-//   int16_t off_angle = flag ? gyro.coordinatesValues[gyro.getAngleToNearmostCoordinate(1)] : gyro.getYawAngle();
-//   uint8_t speed = 255; // 255
-//   while (Encoder() - lastencoder < cm ) {
-//     if (moveSwitch()) {moveSwitch();
-//     }else{
-//    if (camera_Identify()) continue;
-//     int16_t target_angle = gyro.getYawAngle(off_angle);
-//     pdControl(-target_angle, speed, 30.0, 0, MAX_PWM);
-//     if (getColor() == "black") return true;
-//     if (!no) break;
-    
-//     taskYIELD();
-//     }
-//   }
-//   stopTank();
-//   lastencoder = Encoder(); //zera encoder
-//   return false;
-// }
-
-
 bool walkByEncoder(long cm, bool flag) {
   lastencoder = Encoder(); // ZERA no começo
   int16_t off_angle = flag ? gyro.coordinatesValues[gyro.getAngleToNearmostCoordinate(1)] : gyro.getYawAngle();
