@@ -1,0 +1,286 @@
+uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy) {
+  if (alpha > 1 || alpha < 0) alpha = 1;
+  if (isGy) {
+    oldEmaGy[index] = oldEmaGy[index] + alpha * (inputSensor - oldEmaGy[index]);
+    return oldEmaGy[index];
+  } else {
+    oldEmaRefletance[index] = oldEmaRefletance[index] + alpha * (inputSensor - oldEmaRefletance[index]);
+    return oldEmaRefletance[index];
+  }
+}
+
+// GY sensors
+int read_sensors_pure(uint8_t index) {
+  if (index >= N_SENSORS) return -1;
+  tcaselect(index);
+  return sensors[index].readRangeContinuousMillimeters();
+}
+
+//Reading sensors less offset
+int read_sensors(uint8_t index, bool useEma) {
+  int calibrated_sensor = read_sensors_pure(index) - dist_sensors_offsets[index];
+  if (useEma) {
+    sensor_values[index] = emaFilter(alpha, index, calibrated_sensor, true);
+  } else {
+    sensor_values[index] = calibrated_sensor;
+  }
+  return sensor_values[index];
+}
+
+// Activate GY sensor
+void tcaselect(uint8_t i) {
+  if (i > N_SENSORS) return;
+
+  if (i < 7) {
+    Wire.beginTransmission(TCAADDR1);
+    Wire.write(1 << i);
+    Wire.endTransmission();
+    delayMicroseconds(300);
+  } else if (i > 7 && i < 10) {
+    uint8_t j = (i == 8) ? 0 : 1;
+    Wire.beginTransmission(TCAADDR2);
+    Wire.write(1 << j);
+    Wire.endTransmission();
+    delayMicroseconds(300);
+  } else return;
+}
+
+void begin_gy() {
+  for (uint8_t i = 0; i < N_SENSORS; i++) {
+    tcaselect(i);
+    vTaskDelay(pdMS_TO_TICKS(5));  // tempo reduzido
+    if (!sensors[i].init()) {
+      Serial.print("Erro no sensor ");
+      Serial.println(i);
+    } else {
+      sensors[i].setTimeout(500);
+      sensors[i].startContinuous();
+      Serial.print("Sensor iniciado no canal ");
+      Serial.println(i);
+    }
+  }
+}
+
+// ------------------------------ Reflectance plate ---------------------------- // 
+
+void readColorSensors(bool useEma)
+{
+  const uint8_t numReadings = 5;  // Número de amostras
+  long sums[sensor_length] = {0}; // Vetor para acumular as leituras
+
+  for (uint8_t n = 0; n < numReadings; n++)
+  {
+    for (uint8_t i = 0; i < sensor_length; i++)
+    {
+      sums[i] += analogRead(sensor_vector[i]);
+    }
+    vTaskDelay(pdMS_TO_TICKS(2)); // Pequeno delay para estabilizar cada leitura (2 ms)
+  }
+
+  for (uint8_t i = 0; i < sensor_length; i++)
+  {
+    sensor_values[i] = sums[i] / numReadings; // Calcula a média
+    // if (useEma) {
+    //   sensor_values[i] = emaFilter(alpha, i, sensor_values[i], false);
+    // }
+  }
+}
+
+const char *getColor()
+{
+  readColorSensors();
+  if (find_blue())return "blue";
+  if (find_grey())return "grey";
+  if (find_black())return "black";
+  return "unknown";
+}
+
+bool find_blue() {
+  return (sensor_values[0] > 211 && sensor_values[0] < 271 && sensor_values[3] > 0 && sensor_values[3] < 50 && abs(gyro.getInclinationAngle()) < 5) ? true : false; //
+}
+bool find_black() { // First parameter calibrated w black tape and second was calibrated w black sticker 
+  return (sensor_values[0] > 0 && sensor_values[0] < 30 && sensor_values[3] > 30 && sensor_values[3] < 60 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
+  // return (sensor_values[0] > 0 && sensor_values[0] < 80 && sensor_values[3] > 30 && sensor_values[3] < 80 && abs(gyro.getInclinationAngle()) < 5) ? true : false; // Funciona
+
+}
+
+bool find_grey() { // First parameter calibrated w gray tape and second was calibrated w gray sticker 
+  // return (sensor_values[0] > 50 && sensor_values[0] < 120 && sensor_values[3] > 280 && sensor_values[3] < 400) ? true : false;
+  return (sensor_values[0] > 800 && sensor_values[0] < 880 && sensor_values[3] > 310 && sensor_values[3] < 380 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
+}
+
+// ------------------------- Vector reorder --------------------------- //
+
+
+void vectorReorder(int16_t* vector, int8_t index) {
+  int vector2[4];
+  for (uint8_t i = 4; i < 8; i++) {
+    vector2[i - 4] = vector[(i - index) % 4];
+  }
+  for (uint8_t i = 0; i < 4; i++) vector[i] = vector2[i];
+}
+
+void beginLed() {
+  long color = 0xFFFFFF; // Branco
+  // led.setPixelColor(0, color); // LED 7
+  // led.setPixelColor(1, color); // LED 7
+  // led.setPixelColor(2, color); // LED 8
+  // led.setPixelColor(3, color); // LED 8
+  // led.setPixelColor(4, color); // LED 8
+  led.setPixelColor(5, color); // LED 8
+  led.setPixelColor(6, color); // LED 8
+  led.setPixelColor(7, color); // LED 8
+  led.setPixelColor(8, color); // LED 8
+  led.setPixelColor(9, color); // LED 8
+  led.setPixelColor(10, color); // LED 8
+  led.show();
+}
+
+
+// ------------------------- LED blink --------------------------- // 
+void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
+  long color;
+  int8_t ledToBlink[2];
+
+  // Define os LEDs a piscar com base no lado
+  if (side) { // lado direito
+    ledToBlink[0] = 3;
+    ledToBlink[1] = 4;
+  } else {     // lado esquerdo
+    ledToBlink[0] = 0;
+    ledToBlink[1] = 1;
+  }
+  // Define a cor correspondente
+  if (typeColor == 0) color = 0x00FF00; // Verde 
+  else if (typeColor == 1) color = 0xFFFF00; // Amarelo
+  else if (typeColor == 2) color = 0xFF0000; // Vermelho
+  else if (typeColor == 3) color = 0x0000FF; // Azul
+  else if (typeColor == 4) color = 0xFFFFFF; // Branco
+  else color = 0x000000; // Cor padrão (apagado) se tipo inválido
+
+  // Piscar os LEDs
+  for (uint8_t i = 0; i < repeticoes; i++) {
+    if (digitalRead(BUTTON)) break;
+    if(color == 0xFFFFFF || color == 0x0000FF){
+    led.setPixelColor(0, color);
+    led.setPixelColor(1, color);
+    led.setPixelColor(2, color);
+    led.setPixelColor(3, color);
+    led.setPixelColor(4, color);
+    // led.setPixelColor(5, 0xFFFFFF);
+    // led.setPixelColor(6, 0xFFFFFF);
+    // led.setPixelColor(7, 0xFFFFFF);
+    // led.setPixelColor(8, 0xFFFFFF);
+    // led.setPixelColor(9, 0xFFFFFF);
+    // led.setPixelColor(10, 0xFFFFFF);
+    led.show();
+    vTaskDelay(pdMS_TO_TICKS(500));
+    led_clear();
+    vTaskDelay(pdMS_TO_TICKS(500));
+    }else{
+    led.setPixelColor(ledToBlink[0], color);
+    led.setPixelColor(ledToBlink[1], color);
+    led.show();
+    vTaskDelay(pdMS_TO_TICKS(500));
+    led_clear();
+    vTaskDelay(pdMS_TO_TICKS(500));
+    }
+  }
+    // led.setPixelColor(5, 0xFFFFFF);
+    // led.setPixelColor(6, 0xFFFFFF);
+    // led.setPixelColor(7, 0xFFFFFF);
+    // led.setPixelColor(8, 0xFFFFFF);
+    // led.setPixelColor(9, 0xFFFFFF);
+    // led.setPixelColor(10, 0xFFFFFF);
+}
+
+void led_clear() {
+  for (uint8_t i = 0; i < (N_LEDS - 6); i++) led.setPixelColor(i, 0);
+  led.show();
+}
+
+// ---------------------- Conversão dos Códigos ------------------------
+
+uint8_t convert_victim_code(uint8_t code) {
+  switch (code) {
+    case 1: return 0; // stable
+    case 2: return 1; // harmed
+    case 3: return 2; // unharmed
+    default: return 255;
+  }
+}
+
+// -------------------------- Release Kits -----------------------------
+
+void shakeServo(int actualPoint, int shakes, int timeShake, int degrees) {
+  for (byte i = 0; i < shakes; i++) {
+    servo.write(constrain(actualPoint + degrees, 0, 180));
+    delay(timeShake);
+
+    servo.write(constrain(actualPoint - degrees, 0, 180));
+    delay(timeShake);
+  }
+
+  // Back to the original point
+  servo.write(actualPoint);
+  delay(timeShake);
+}
+
+void dropServoKit(int kits, int time, bool shake, bool toLeft) {
+
+  const uint8_t side = toLeft ? KIT_LEFT : KIT_RIGHT;
+  
+  for(byte i = 0; i < kits; i++) {
+    servo.write(side);
+    delay(time);
+
+    if (shake) shakeServo(side, 30, 60, 5);
+
+    servo.write(KIT_CENTER);
+    delay(time);
+  }
+}
+
+bool release_kits(uint8_t reps, bool sideLeft) {
+  if (!isValidVictim(sideLeft)) {return false;}
+  Point ponto_atual = robot.getActualPoint();
+  uint16_t currentTile = robot.pointToIndex(ponto_atual);
+
+  // Se já lançou kit nesse tile ou valor inválido, sai
+  if (reps >= 3 || robot.victimNodes.contains(currentTile)) return false;
+
+  // uint8_t side = sideLeft ? KIT_RIGHT : KIT_LEFT; 
+
+  // Pisca LED com a cor certa no lado certo
+  blink_led(5, reps, sideLeft);
+
+  // for (uint8_t i = 0; i < reps; i++) {
+  //   servo.write(side);
+  //   vTaskDelay(pdMS_TO_TICKS(700));
+  //   servo.write(KIT_CENTER);
+  //   vTaskDelay(pdMS_TO_TICKS(1500));
+  // }
+
+  dropServoKit(reps, 800, true, sideLeft);
+
+  victimCounter++;
+  robot.victimNodes.append(currentTile);
+  return true;
+}
+
+//--------------------------- Verify Victms ----------------------------
+
+bool isValidVictim(bool sideLeft) {
+  if (sideLeft) { // Lado esquerdo
+    if (read_sensors(1) && read_sensors(2) > max_victm_distance) {
+      return false; // vitima inválida
+    }
+  }
+  if (!sideLeft) { // Lado direito
+    if (read_sensors(5) && read_sensors(6) > max_victm_distance) {
+      return false; // Vítima inválida
+    }
+  }
+  return true; // Vítima válida
+}
+
