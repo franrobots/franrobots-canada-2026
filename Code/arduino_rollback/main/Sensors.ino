@@ -114,17 +114,18 @@ void vectorReorder(int16_t* vector, int8_t index) {
 
 void beginLed() {
   long color = 0xFFFFFF; // Branco
-  // led.setPixelColor(0, color); // LED 7
-  // led.setPixelColor(1, color); // LED 7
-  // led.setPixelColor(2, color); // LED 8
-  // led.setPixelColor(3, color); // LED 8
-  // led.setPixelColor(4, color); // LED 8
+  led.setPixelColor(0, color); // LED 7
+  led.setPixelColor(1, color); // LED 7
+  led.setPixelColor(2, color); // LED 8
+  led.setPixelColor(3, color); // LED 8
+  led.setPixelColor(4, color); // LED 8
   led.setPixelColor(5, color); // LED 8
-  led.setPixelColor(6, color); // LED 8
-  led.setPixelColor(7, color); // LED 8
-  led.setPixelColor(8, color); // LED 8
-  led.setPixelColor(9, color); // LED 8
-  led.setPixelColor(10, color); // LED 8
+  // led.setPixelColor(6, color); // LED 8
+  // led.setPixelColor(7, color); // LED 8
+  // led.setPixelColor(8, color); // LED 8
+  // led.setPixelColor(9, color); // LED 8
+  // led.setPixelColor(10, color); // LED 8
+  // led.setPixelColor(11, color); // LED 8
   led.show();
 }
 
@@ -159,7 +160,7 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
     led.setPixelColor(2, color);
     led.setPixelColor(3, color);
     led.setPixelColor(4, color);
-    // led.setPixelColor(5, 0xFFFFFF);
+    led.setPixelColor(5, color);
     // led.setPixelColor(6, 0xFFFFFF);
     // led.setPixelColor(7, 0xFFFFFF);
     // led.setPixelColor(8, 0xFFFFFF);
@@ -187,7 +188,7 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
 }
 
 void led_clear() {
-  for (uint8_t i = 0; i < (N_LEDS - 6); i++) led.setPixelColor(i, 0);
+  for (uint8_t i = 0; i < (N_LEDS); i++) led.setPixelColor(i, 0);
   led.show();
 }
 

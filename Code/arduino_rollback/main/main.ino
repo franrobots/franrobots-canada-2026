@@ -56,14 +56,14 @@
 #define NEAR_WALL 180
 
 #define LEDS_PIN 23
+#define N_LEDS 12
 
 #define SENSOR_ldrR 34
 #define SENSOR_ldrB 39
 #define SENSOR_ldrG 36
 #define SENSOR_c9 35
 
-#define N_LEDS 11
-#define BUTTON 4 // 12
+#define BUTTON 4 // interruption
 
 #define TCAADDR 0x70
 
@@ -203,7 +203,7 @@ void IRAM_ATTR encoderISR() {
 float Encoder() {
   //int incAngle = -gyro.getInclinationAngle();
  // bool cmValue = incAngle > 10 ? true : false;
-  uint32_t cnt;
+  int32_t cnt;
   portENTER_CRITICAL(&mux);
   cnt = pulseCount;
   portEXIT_CRITICAL(&mux);
@@ -402,19 +402,19 @@ void taskOnCore0(void *pvParameters) {
     }else{
         //blink_led(5, 3, true);
         moveTile(); // principal
-        //beginLed();
+        // beginLed();
         //getNextTileAngle();
         //walkByEncoder(30, true);
         //delay(10000);
         // alignTile();
         //SerialBT.println(getColor());
         // moveTank(255, 255, true);
+        // Serial.println(Encoder());
         // blink_led(5, 3, true);
         //printCam();
         //delay(10000);
         // testeServo();
         //printGyro();
-        // Encoder();
         // printEncoder();
         // printSensorsPure();
         // printSensors(); // Gy
