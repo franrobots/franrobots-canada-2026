@@ -85,12 +85,12 @@ void moveTile()
         if (no) turn_left();
         break;
       case 3:
-        if (no) moveTank(150, 150, false);
+        if (no) moveTank(100, 100, false); // 150
         if (no) vTaskDelay(pdMS_TO_TICKS(800)); //800
         if (no) stopTank();
         if (no) vTaskDelay(pdMS_TO_TICKS(200));
         if (no) gyro.resetCoordinatesValues(position);
-        if (no) moveTank(-150, -150, false);
+        if (no) moveTank(-100, -100, false); // 150
         if (no) vTaskDelay(pdMS_TO_TICKS(250)); //600
         if (no) turn_left();
         if (no) turn_left();
@@ -110,10 +110,10 @@ void moveTile()
     }   
     
     
-  if (walkByEncoder(27, walkByCoordinate)) {
+  if (walkByEncoder(30, walkByCoordinate)) {
      // Trocar valor de gap entre os ladrilhos (valor de movimentação)
      SerialBT.println("encontrei------------------------------------------------------------");
-    if (no) moveTank(-255, -255, false);
+    if (no) moveTank(-100, -100, false); // 255
     if (no) vTaskDelay(pdMS_TO_TICKS(800)); // Delay de ré do ladrilho preto // 650
     if (no) stopTank();
     uint16_t black_index = robot.getRelativeNeighborhood(position).getByIndex(0);
@@ -149,7 +149,7 @@ bool camera_Identify(){
 bool walkByEncoder(long cm, bool flag) {
   lastencoder = Encoder(); // ZERA no começo
   int16_t off_angle = flag ? gyro.coordinatesValues[gyro.getAngleToNearmostCoordinate(1)] : gyro.getYawAngle();
-  uint8_t speed = 255; // 255
+  uint8_t speed = 100; // 255
   while (Encoder() - lastencoder < cm) {  // + addcm + addswitch)
   // int incAngle = -gyro.getInclinationAngle();
   //   if (abs(incAngle) > 10) {
@@ -177,6 +177,7 @@ bool walkByEncoder(long cm, bool flag) {
     }
   }
   stopTank();
+  // while (true) {}
   //addswitch = 0;
   lastencoder = Encoder(); //zera encoder
   return false;
@@ -306,7 +307,7 @@ void alignTile() {
   const int idx_front_back[2] = {7, 3};
   int v_front_back[2] = { read_sensors(idx_front_back[0]), read_sensors(idx_front_back[1]) };
   // frente(0) e trás(4) "de referência" para sanity check
-  const int idx_ref_fb[2] = {0, 4};
+  const int idx_ref_fb[2] = {0, 4}; // oficial aqui é 4
   int v_ref_fb[2] = { read_sensors(idx_ref_fb[0]), read_sensors(idx_ref_fb[1]) };
   // qual lado está mais próximo (menor distância): front (-1) ou back (+1)
   // (mantém sua convenção: frente -1, trás +1)

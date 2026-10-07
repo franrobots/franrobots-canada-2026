@@ -12,6 +12,9 @@ uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy) {
 // GY sensors
 int read_sensors_pure(uint8_t index) {
   if (index >= N_SENSORS) return -1;
+
+  // uint8_t channel = GY_CHANNEL[index];
+
   tcaselect(index);
   return sensors[index].readRangeContinuousMillimeters();
 }

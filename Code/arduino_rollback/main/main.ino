@@ -207,7 +207,7 @@ float Encoder() {
   portENTER_CRITICAL(&mux);
   cnt = pulseCount;
   portEXIT_CRITICAL(&mux);
-    return cnt * 0.00550f;  // 0.00590 roda grande
+    return cnt * 0.03641f;  // 0.03641
 }
 
 // ---------------- General ------------------ //
@@ -240,15 +240,21 @@ int16_t sensor_values[sensor_length];
 const uint8_t N_SENSORS = 8;
 VL53L0X sensors[N_SENSORS];
 
-//                                                0   1   2   3   4   5   6    7
-constexpr int dist_sensors_offsets[N_SENSORS] = {20, 35, 50, 58, 62, 42, 115, 72}; // positivo = aumenta; negativo = subtrai.
+// posição lógica no robô -> canal físico do TCA
+// constexpr uint8_t GY_CHANNEL[N_SENSORS] = {
+//   0, 1, 2, 6, 4, 7, 3, 5
+// };
+
+//                                                0   1   2   3   4   5   6   7
+//                                                0   1   2   6   4   7   3   5
+constexpr int dist_sensors_offsets[N_SENSORS] = {64, 64, 35, 73, 43, 72, 69, 80}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
-constexpr uint16_t sensors_target_value[] = {36, 355, 660, 950}; // alignTile 1, 2, 3, 4
+constexpr uint16_t sensors_target_value[] = {120, 355, 660, 950}; // alignTile 1, 2, 3, 4
 
 // --------------------- EMA Filter -------------------- // 
 int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0};
 int oldEmaRefletance[sensor_length] = {0, 0, 0, 0};
-constexpr float alpha = 0.5;
+constexpr float alpha = 0.1;
 
 // --------------------- verify Victms -------------------- //
 constexpr uint8_t max_victm_distance = 117;
@@ -279,7 +285,7 @@ void moveTank(int, int, bool);
 void stopTank();
 void pdControl(int16_t, int16_t, float, float, uint8_t);
 uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy);
-int read_sensors(uint8_t, bool useEma = true);
+int read_sensors(uint8_t, bool useEma = false);
 int read_sensors_pure(uint8_t);
 void readColorSensors(bool useEma = true);
 void tcaselect(uint8_t);
@@ -418,7 +424,7 @@ void taskOnCore0(void *pvParameters) {
         // printEncoder();
         // printSensorsPure();
         // printSensors(); // Gy
-        //printVector();
+        // printVector();
         // printReflectance();
         // printRefletanceResult();
       }
