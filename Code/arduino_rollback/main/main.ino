@@ -320,14 +320,14 @@ void taskCamera(void *pvParameters);
 
 void setup() {
   analogReadResolution(10);
-  ledcSetup(FORWARD_0, 5000, 8);
-  ledcSetup(BACK_0, 5000, 8);
-  ledcSetup(FORWARD_1, 5000, 8);
-  ledcSetup(BACK_1, 5000, 8);
-  ledcSetup(FORWARD_2, 5000, 8);
-  ledcSetup(BACK_2, 5000, 8);
-  ledcSetup(FORWARD_3, 5000, 8);
-  ledcSetup(BACK_3, 5000, 8);
+  ledcSetup(FORWARD_0, 20000, 8);
+  ledcSetup(BACK_0, 20000, 8);
+  ledcSetup(FORWARD_1, 20000, 8);
+  ledcSetup(BACK_1, 20000, 8);
+  ledcSetup(FORWARD_2, 20000, 8);
+  ledcSetup(BACK_2, 20000, 8);
+  ledcSetup(FORWARD_3, 20000, 8);
+  ledcSetup(BACK_3, 20000, 8);
   ledcAttachPin(LEFT_MOTOR_1_0, FORWARD_0);
   ledcAttachPin(LEFT_MOTOR_2_0, BACK_0);
   ledcAttachPin(LEFT_MOTOR_1_1, FORWARD_1);
