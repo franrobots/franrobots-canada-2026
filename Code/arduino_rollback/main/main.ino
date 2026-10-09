@@ -22,23 +22,23 @@
 // Motor da Frente - Esquerda - 0
 #define FORWARD_0 2
 #define BACK_0 3
-#define LEFT_MOTOR_1_0 25
-#define LEFT_MOTOR_2_0 26
+#define LEFT_MOTOR_1_0 32
+#define LEFT_MOTOR_2_0 33
 // Motor de Trás - Esquerda - 1
 #define FORWARD_1 10
 #define BACK_1 11
-#define LEFT_MOTOR_1_1 33
-#define LEFT_MOTOR_2_1 32 
+#define LEFT_MOTOR_1_1 26
+#define LEFT_MOTOR_2_1 25 
 // Motor de Trás - Direita - 2
 #define FORWARD_2 4   //4
 #define BACK_2 5      //5
-#define RIGHT_MOTOR_1_2 16 
-#define RIGHT_MOTOR_2_2 17
+#define RIGHT_MOTOR_1_2 12
+#define RIGHT_MOTOR_2_2 27
 // Motor da Frente - Direita - 3
 #define FORWARD_3 6   //6
 #define BACK_3 7      //7
-#define RIGHT_MOTOR_1_3 27
-#define RIGHT_MOTOR_2_3 12
+#define RIGHT_MOTOR_1_3 17
+#define RIGHT_MOTOR_2_3 16
 
 // Velocity to control motors
 #define MIN_PWM 100
@@ -195,8 +195,8 @@ void IRAM_ATTR encoderISR() {
 
   Encoder_C1Last = Lstate;
 
-  if(!direction_m)  pulseCount--;
-  else              pulseCount++;
+  if(!direction_m)  pulseCount++;
+  else              pulseCount--;
   
 }
 
@@ -207,7 +207,7 @@ float Encoder() {
   portENTER_CRITICAL(&mux);
   cnt = pulseCount;
   portEXIT_CRITICAL(&mux);
-    return cnt * 0.03641f;  // 0.03641
+    return cnt * 0.009105f;  // 0.03641
 }
 
 // ---------------- General ------------------ //
@@ -242,14 +242,14 @@ VL53L0X sensors[N_SENSORS];
 
 // posição lógica no robô -> canal físico do TCA
 // constexpr uint8_t GY_CHANNEL[N_SENSORS] = {
-//   0, 1, 2, 6, 4, 7, 3, 5
+//   0, 1, 2, 3, 7, 5, 6, 4
 // };
 
 //                                                0   1   2   3   4   5   6   7
-//                                                0   1   2   6   4   7   3   5
-constexpr int dist_sensors_offsets[N_SENSORS] = {64, 64, 35, 73, 43, 72, 69, 80}; // positivo = aumenta; negativo = subtrai.
+//                                                0   1   2   3   4   5   6   7
+constexpr int dist_sensors_offsets[N_SENSORS] = {69, 29, 69, 66, 48, 73, 50, 51}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
-constexpr uint16_t sensors_target_value[] = {120, 355, 660, 950}; // alignTile 1, 2, 3, 4
+constexpr uint16_t sensors_target_value[] = {50, 360, 640, 920}; // alignTile 1, 2, 3, 4 | 120, 355, 660, 950
 
 // --------------------- EMA Filter -------------------- // 
 int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0};

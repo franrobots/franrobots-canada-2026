@@ -149,7 +149,7 @@ bool camera_Identify(){
 bool walkByEncoder(long cm, bool flag) {
   lastencoder = Encoder(); // ZERA no começo
   int16_t off_angle = flag ? gyro.coordinatesValues[gyro.getAngleToNearmostCoordinate(1)] : gyro.getYawAngle();
-  uint8_t speed = 100; // 255
+  uint8_t speed = 255; // 255
   while (Encoder() - lastencoder < cm) {  // + addcm + addswitch)
   // int incAngle = -gyro.getInclinationAngle();
   //   if (abs(incAngle) > 10) {
@@ -177,7 +177,7 @@ bool walkByEncoder(long cm, bool flag) {
     }
   }
   stopTank();
-  // while (true) {}
+ // while (true) {} // Confirmar passo do encoder
   //addswitch = 0;
   lastencoder = Encoder(); //zera encoder
   return false;
