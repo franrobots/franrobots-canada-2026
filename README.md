@@ -3,6 +3,5 @@
 
 ## Official documentation
 For now, check out the robot's official documentation:
-- [Canada Poster](Docs/officialRobotDocumentation/RoboCup_Canada_Poster.jpeg)
 - [Canada Poster](Docs/officialRobotDocumentation/RoboCup_Canada_Poster.pdf)
 - TDP (Coming Soon)
