@@ -56,7 +56,7 @@
 #define NEAR_WALL 180
 
 #define LEDS_PIN 23
-#define N_LEDS 12
+#define N_LEDS 4
 
 #define SENSOR_ldrR 34
 #define SENSOR_ldrB 39
@@ -411,12 +411,16 @@ void taskOnCore0(void *pvParameters) {
         // beginLed();
         //getNextTileAngle();
         //walkByEncoder(30, true);
-        //delay(10000);
+        // delay(10000);
         // alignTile();
         //SerialBT.println(getColor());
         // moveTank(255, 255, true);
         // Serial.println(Encoder());
-        // blink_led(5, 3, true);
+        // blink_led(2, 0, true);
+        // blink_led(2, 1, false);
+        // blink_led(2, 2, true);
+        // blink_led(2, 3, false);
+        // blink_led(2, 4, true);
         //printCam();
         //delay(10000);
         // testeServo();
