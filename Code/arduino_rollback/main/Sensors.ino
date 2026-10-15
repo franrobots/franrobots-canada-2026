@@ -44,11 +44,11 @@ void begin_gy() {
   for (uint8_t i = 0; i < N_SENSORS; i++) {
     tcaselect(i);
     vTaskDelay(pdMS_TO_TICKS(5));  // tempo reduzido
+    sensors[i].setTimeout(500);
     if (!sensors[i].init()) {
       Serial.print("Erro no sensor ");
       Serial.println(i);
     } else {
-      sensors[i].setTimeout(500);
       sensors[i].startContinuous();
       Serial.print("Sensor iniciado no canal ");
       Serial.println(i);

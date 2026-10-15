@@ -58,10 +58,10 @@
 #define LEDS_PIN 23
 #define N_LEDS 4
 
-#define SENSOR_ldrR 34
-#define SENSOR_ldrB 39
-#define SENSOR_ldrG 36
-#define SENSOR_c9 35
+#define SENSOR_ldrR 39
+#define SENSOR_ldrB 35
+#define SENSOR_ldrG 34
+#define SENSOR_c9 36
 
 #define BUTTON 4 // interruption
 
@@ -287,7 +287,7 @@ void pdControl(int16_t, int16_t, float, float, uint8_t);
 uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy);
 int read_sensors(uint8_t, bool useEma = false);
 int read_sensors_pure(uint8_t);
-void readColorSensors(bool useEma = true);
+void readColorSensors(bool useEma = false);
 void tcaselect(uint8_t);
 void calibrate_dist_sensors();
 void init_gy();
