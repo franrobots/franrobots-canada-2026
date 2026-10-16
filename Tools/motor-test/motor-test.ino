@@ -29,6 +29,7 @@
 
 
 void setup() {
+  Serial.begin(115200);
   ledcSetup(FORWARD_0, 20000, 8);
   ledcSetup(BACK_0, 20000, 8);
   ledcSetup(FORWARD_1, 20000, 8);
@@ -46,7 +47,7 @@ void setup() {
   ledcAttachPin(RIGHT_MOTOR_1_3, FORWARD_3);
   ledcAttachPin(RIGHT_MOTOR_2_3, BACK_3);
   delay(100);
-  Serial.print("Pronto para teste");
+  Serial.println("Pronto para teste");
 }
 
 void analog_write(uint8_t channel, uint8_t value) {
