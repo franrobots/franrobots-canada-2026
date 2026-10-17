@@ -359,8 +359,8 @@ void setup() {
   Serial.println("Setup ready");
   Serial.println("Que Deus abençoe o round!");
 
-cameraQueue = xQueueCreate(1, sizeof(VictimData));
-if (!cameraQueue) {Serial.println("Erro criando cameraQueue");}
+  cameraQueue = xQueueCreate(1, sizeof(VictimData));
+  if (!cameraQueue) {Serial.println("Erro criando cameraQueue");}
 
   xTaskCreatePinnedToCore(taskOnCore0, "TaskOnCore0", 12000, NULL, 2, &TaskOnCore0, 0);
   xTaskCreatePinnedToCore(taskOnCore1, "TaskOnCore1", 12000, NULL, 1, &TaskOnCore1, 1);
@@ -409,11 +409,11 @@ void taskOnCore0(void *pvParameters) {
         //blink_led(5, 3, true);
         moveTile(); // principal
         // beginLed();
-        //getNextTileAngle();
-        //walkByEncoder(30, true);
+        // getNextTileAngle();
+        // walkByEncoder(30, true);
         // delay(10000);
         // alignTile();
-        //SerialBT.println(getColor());
+        // SerialBT.println(getColor());
         // moveTank(255, 255, true);
         // Serial.println(Encoder());
         // blink_led(2, 0, true);
@@ -421,10 +421,10 @@ void taskOnCore0(void *pvParameters) {
         // blink_led(2, 2, true);
         // blink_led(2, 3, false);
         // blink_led(2, 4, true);
-        //printCam();
-        //delay(10000);
+        // printCam();
+        // delay(10000);
         // testeServo();
-        //printGyro();
+        // printGyro();
         // printEncoder();
         // printSensorsPure();
         // printSensors(); // Gy

@@ -117,10 +117,10 @@ void vectorReorder(int16_t* vector, int8_t index) {
 
 void beginLed() {
   long color = 0xFFFFFF; // Branco
-  led.setPixelColor(0, color); // LED 7
-  led.setPixelColor(1, color); // LED 7
-  // led.setPixelColor(2, color); // LED 8
-  // led.setPixelColor(3, color); // LED 8
+  // led.setPixelColor(0, color); // LED 7
+  // led.setPixelColor(1, color); // LED 7
+  led.setPixelColor(2, color); // LED 8
+  led.setPixelColor(3, color); // LED 8
   // led.setPixelColor(4, color); // LED 8
   // led.setPixelColor(5, color); // LED 8
   // led.setPixelColor(6, color); // LED 8
@@ -140,14 +140,13 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
 
   // Define os LEDs a piscar com base no lado
   if (side) { // lado direito
-    ledToBlink[0] = 3;
+    ledToBlink[0] = 0;
     // ledToBlink[1] = 4;
   } else {     // lado esquerdo
-    ledToBlink[0] = 2;
+    ledToBlink[0] = 1;
     // ledToBlink[1] = 1;
   }
   // Define a cor correspondente
-  Serial.println(typeColor);
   if (typeColor == 0) color = 0x0000FF; // Verde // 0X00FF00
   else if (typeColor == 1) color = 0xFF00FF; // Amarelo // 0xFFFF00
   else if (typeColor == 2) color = 0xFF0000; // Vermelho
@@ -160,10 +159,10 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
     if (digitalRead(BUTTON)) break;
     if(color == 0xFFFFFF || color == 0x00FF00){ // 0X0000FF
       // Serial.println(color);
-      // led.setPixelColor(0, color);
-      // led.setPixelColor(1, color);
-      led.setPixelColor(2, color); // Fita do meio esquerda
-      led.setPixelColor(3, color); // Fita do meio direita
+      led.setPixelColor(0, color);
+      led.setPixelColor(1, color);
+      // led.setPixelColor(2, color);
+      // led.setPixelColor(3, color);
       // led.setPixelColor(ledToBlink[0], color);
       // led.setPixelColor(4, color);
       // led.setPixelColor(5, color);
@@ -183,7 +182,7 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
 }
 
 void led_clear() {
-  for (uint8_t i = 2; i < (N_LEDS); i++) led.setPixelColor(i, 0);
+  for (uint8_t i = 0; i < (N_LEDS - 2); i++) led.setPixelColor(i, 0);
   led.show();
 }
 
