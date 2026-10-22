@@ -32,13 +32,13 @@
 // Motor de Trás - Direita - 2
 #define FORWARD_2 4   //4
 #define BACK_2 5      //5
-#define RIGHT_MOTOR_1_2 12
-#define RIGHT_MOTOR_2_2 27
+#define RIGHT_MOTOR_1_2 17
+#define RIGHT_MOTOR_2_2 16
 // Motor da Frente - Direita - 3
 #define FORWARD_3 6   //6
 #define BACK_3 7      //7
-#define RIGHT_MOTOR_1_3 17
-#define RIGHT_MOTOR_2_3 16
+#define RIGHT_MOTOR_1_3 12
+#define RIGHT_MOTOR_2_3 27
 
 // Velocity to control motors
 #define MIN_PWM 100
@@ -247,7 +247,7 @@ VL53L0X sensors[N_SENSORS];
 
 //                                                0   1   2   3   4   5   6   7
 //                                                0   1   2   3   4   5   6   7
-constexpr int dist_sensors_offsets[N_SENSORS] = {69, 29, 69, 66, 48, 73, 50, 51}; // positivo = aumenta; negativo = subtrai.
+constexpr int dist_sensors_offsets[N_SENSORS] = {75, 50, 80, 57, 66, 64, 31, 44}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
 constexpr uint16_t sensors_target_value[] = {50, 360, 640, 920}; // alignTile 1, 2, 3, 4 | 120, 355, 660, 950
 
@@ -406,7 +406,7 @@ void taskOnCore0(void *pvParameters) {
       cameraIgnore = false; 
       return2init();
     }else{
-        //blink_led(5, 3, true);
+        // blink_led(5, 3, true);
         moveTile(); // principal
         // beginLed();
         // getNextTileAngle();

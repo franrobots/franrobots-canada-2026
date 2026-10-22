@@ -1,5 +1,6 @@
 uint16_t emaFilter(float alpha, int index, uint16_t inputSensor, bool isGy) {
   if (alpha > 1 || alpha < 0) alpha = 1;
+  // if (inputSensor < 0) inputSensor = 0;
   if (isGy) {
     oldEmaGy[index] = oldEmaGy[index] + alpha * (inputSensor - oldEmaGy[index]);
     return oldEmaGy[index];
@@ -83,25 +84,25 @@ void readColorSensors(bool useEma)
 
 const char *getColor()
 {
-  // readColorSensors();
-  // if (find_blue())return "blue";
-  // if (find_grey())return "grey";
-  // if (find_black())return "black";
+  readColorSensors();
+  if (find_blue())return "blue";
+  if (find_grey())return "grey";
+  if (find_black())return "black";
   return "unknown";
 }
 
 bool find_blue() {
-  return (sensor_values[0] > 211 && sensor_values[0] < 271 && sensor_values[3] > 0 && sensor_values[3] < 50 && abs(gyro.getInclinationAngle()) < 5) ? true : false; //
+  return (sensor_values[1] > 758 && sensor_values[1] < 799 && sensor_values[2] > 702 && sensor_values[2] < 744 && sensor_values[3] > 682 && sensor_values[3] < 724 && abs(gyro.getInclinationAngle()) < 5) ? true : false; //
 }
 bool find_black() { // First parameter calibrated w black tape and second was calibrated w black sticker 
-  return (sensor_values[0] > 0 && sensor_values[0] < 30 && sensor_values[3] > 30 && sensor_values[3] < 60 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
+  return (sensor_values[1] > 497 && sensor_values[1] < 537 && sensor_values[2] > 536 && sensor_values[2] < 577 && sensor_values[3] > 566 && sensor_values[3] < 606 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
   // return (sensor_values[0] > 0 && sensor_values[0] < 80 && sensor_values[3] > 30 && sensor_values[3] < 80 && abs(gyro.getInclinationAngle()) < 5) ? true : false; // Funciona
 
 }
 
 bool find_grey() { // First parameter calibrated w gray tape and second was calibrated w gray sticker 
   // return (sensor_values[0] > 50 && sensor_values[0] < 120 && sensor_values[3] > 280 && sensor_values[3] < 400) ? true : false;
-  return (sensor_values[0] > 800 && sensor_values[0] < 880 && sensor_values[3] > 310 && sensor_values[3] < 380 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
+  return (sensor_values[1] > 948 && sensor_values[1] < 996 && sensor_values[2] > 945 && sensor_values[2] < 989 && sensor_values[3] > 953 && sensor_values[3] < 993 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
 
 // ------------------------- Vector reorder --------------------------- //

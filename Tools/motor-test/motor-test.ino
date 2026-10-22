@@ -11,13 +11,14 @@
 // Motor de Trás - Direita - 2
 #define FORWARD_2 4   //4
 #define BACK_2 5      //5
-#define RIGHT_MOTOR_1_2 12
-#define RIGHT_MOTOR_2_2 27
+#define RIGHT_MOTOR_1_2 17
+#define RIGHT_MOTOR_2_2 16
 // Motor da Frente - Direita - 3
 #define FORWARD_3 6   //6
 #define BACK_3 7      //7
-#define RIGHT_MOTOR_1_3 17
-#define RIGHT_MOTOR_2_3 16
+#define RIGHT_MOTOR_1_3 12
+#define RIGHT_MOTOR_2_3 27
+
 // Velocity to control motors
 #define MIN_PWM 100
 #define MAX_PWM 255
@@ -56,14 +57,14 @@ void analog_write(uint8_t channel, uint8_t value) {
 
 void loop() {
   // moveTank(255, 255, true);
-  analog_write(BACK_0, 255); // 26 certo | Frente esquerda
-  analog_write(BACK_1, 0); // 32 certo | Trás esquerda
-  analog_write(BACK_2, 0); // 17 certo | Trás direita
-  analog_write(BACK_3, 0); // 12 certo | Frente direita
-  analog_write(FORWARD_0, 0); // 25 errado | parado | Frente esquerda
-  analog_write(FORWARD_1, 0); // 33 certo | Trás esquerda
-  analog_write(FORWARD_2, 0); // 16 certo | Trás direita
-  analog_write(FORWARD_3, 0); // 27 certo | Frente direita
+  analog_write(BACK_0, 255); //  Frente esquerda
+  analog_write(BACK_1, 0); // Trás esquerda
+  analog_write(BACK_2, 0); // Trás direita
+  analog_write(BACK_3, 0); // Frente direita
+  analog_write(FORWARD_0, 0); // Frente esquerda
+  analog_write(FORWARD_1, 0); // Trás esquerda
+  analog_write(FORWARD_2, 0); // Trás direita
+  analog_write(FORWARD_3, 0); // Frente direita
 }
 
 int16_t motorValueCorrection(int value) {
