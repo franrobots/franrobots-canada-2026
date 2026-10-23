@@ -64,19 +64,19 @@ void printSensors() {
 
 // Reflectance plate 
 void printReflectance() {
-  // readColorSensors();
-  // SerialBT.print("C9: ");   SerialBT.print(sensor_values[0]);
-  // SerialBT.print(" | R: "); SerialBT.print(sensor_values[1]);
-  // SerialBT.print(" | G: "); SerialBT.print(sensor_values[2]);
-  // SerialBT.print(" | B: "); SerialBT.println(sensor_values[3]);
-  // SerialBT.println(); // Quebra de linha após os dois valores
-
   readColorSensors();
-  Serial.print("C9: ");   Serial.print(sensor_values[0]);
-  Serial.print(" | R: "); Serial.print(sensor_values[1]);
-  Serial.print(" | G: "); Serial.print(sensor_values[2]);
-  Serial.print(" | B: "); Serial.println(sensor_values[3]);
-  Serial.println(); // Quebra de linha após os dois valores
+  SerialBT.print("C9: ");   SerialBT.print(sensor_values[0]);
+  SerialBT.print(" | R: "); SerialBT.print(sensor_values[1]);
+  SerialBT.print(" | G: "); SerialBT.print(sensor_values[2]);
+  SerialBT.print(" | B: "); SerialBT.println(sensor_values[3]);
+  SerialBT.println(); // Quebra de linha após os dois valores
+
+  // readColorSensors();
+  // Serial.print("C9: ");   Serial.print(sensor_values[0]);
+  // Serial.print(" | R: "); Serial.print(sensor_values[1]);
+  // Serial.print(" | G: "); Serial.print(sensor_values[2]);
+  // Serial.print(" | B: "); Serial.println(sensor_values[3]);
+  // Serial.println(); // Quebra de linha após os dois valores
 }
 
 // Robot encoder

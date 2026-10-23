@@ -61,10 +61,10 @@ void moveTile()
       robot.addVisitNodesTimes(robot.pointToIndex(ponto_atual));
     if (no){
       if (getColor() == "blue"){
-        robot.blackNodes.append(robot.pointToIndex(ponto_atual)); // Considera o azul como preto, desconsiderando sua posição do mapa.
+        // robot.blackNodes.append(robot.pointToIndex(ponto_atual)); // Considera o azul como preto, desconsiderando sua posição do mapa.
         stopTank();
-        blink_led(5, 3, true);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        // blink_led(5, 3, true);
+        vTaskDelay(pdMS_TO_TICKS(5000));
       }
       if (getColor() == "grey"){
         blink_led(2, 4, false);
@@ -113,7 +113,8 @@ void moveTile()
   if (walkByEncoder(30, walkByCoordinate)) {
      // Trocar valor de gap entre os ladrilhos (valor de movimentação)
      SerialBT.println("encontrei------------------------------------------------------------");
-    if (no) moveTank(-100, -100, false); // 255
+     
+    if (no) moveTank(-255, -255, false); // 255
     if (no) vTaskDelay(pdMS_TO_TICKS(800)); // Delay de ré do ladrilho preto // 650
     if (no) stopTank();
     uint16_t black_index = robot.getRelativeNeighborhood(position).getByIndex(0);
@@ -434,9 +435,9 @@ void return2init() {
   List teste = robot.getInstructions();
   blink_led(5, 4, true);
   for (uint8_t i = 0; i < teste.len(); i++) {
-    if (getColor() == "blue") {
-      blink_led(5, 3, true);
-    }
+    // if (getColor() == "blue") {
+    //   blink_led(5, 3, true);
+    // }
     bool turnFlag = false;
     switch (teste.getByIndex(i)) {
       case 1:

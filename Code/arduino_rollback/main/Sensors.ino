@@ -92,17 +92,28 @@ const char *getColor()
 }
 
 bool find_blue() {
-  return (sensor_values[1] > 758 && sensor_values[1] < 799 && sensor_values[2] > 702 && sensor_values[2] < 744 && sensor_values[3] > 682 && sensor_values[3] < 724 && abs(gyro.getInclinationAngle()) < 5) ? true : false; //
+  return (
+    sensor_values[0] > 320 && sensor_values[0] < 399 && // C9
+    sensor_values[1] > 568 && sensor_values[1] < 623 && // R
+    sensor_values[2] > 618 && sensor_values[2] < 673 && // G
+    abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
-bool find_black() { // First parameter calibrated w black tape and second was calibrated w black sticker 
-  return (sensor_values[1] > 497 && sensor_values[1] < 537 && sensor_values[2] > 536 && sensor_values[2] < 577 && sensor_values[3] > 566 && sensor_values[3] < 606 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
-  // return (sensor_values[0] > 0 && sensor_values[0] < 80 && sensor_values[3] > 30 && sensor_values[3] < 80 && abs(gyro.getInclinationAngle()) < 5) ? true : false; // Funciona
 
+bool find_black() { // First parameter calibrated w black tape and second was calibrated w black sticker 
+  return (
+    sensor_values[0] > 0 && sensor_values[0] < 10 && // C9
+    sensor_values[1] > 406 && sensor_values[1] < 463 && // R
+    sensor_values[2] > 450 && sensor_values[2] < 498 && // G
+    abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
 
 bool find_grey() { // First parameter calibrated w gray tape and second was calibrated w gray sticker 
   // return (sensor_values[0] > 50 && sensor_values[0] < 120 && sensor_values[3] > 280 && sensor_values[3] < 400) ? true : false;
-  return (sensor_values[1] > 948 && sensor_values[1] < 996 && sensor_values[2] > 945 && sensor_values[2] < 989 && sensor_values[3] > 953 && sensor_values[3] < 993 && abs(gyro.getInclinationAngle()) < 5) ? true : false;
+  return (
+    sensor_values[0] > 930 && sensor_values[0] < 970 &&
+    sensor_values[1] > 935 && sensor_values[1] < 975 &&
+    sensor_values[2] > 915 && sensor_values[2] < 955 &&
+    abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
 
 // ------------------------- Vector reorder --------------------------- //
