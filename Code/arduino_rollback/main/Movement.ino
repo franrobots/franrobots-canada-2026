@@ -61,13 +61,14 @@ void moveTile()
       robot.addVisitNodesTimes(robot.pointToIndex(ponto_atual));
     if (no){
       if (getColor() == "blue"){
-        // robot.blackNodes.append(robot.pointToIndex(ponto_atual)); // Considera o azul como preto, desconsiderando sua posição do mapa.
+        vTaskDelay(pdMS_TO_TICKS(500));
+        robot.blackNodes.append(robot.pointToIndex(ponto_atual)); // Considera o azul como preto, desconsiderando sua posição do mapa.
         stopTank();
         // blink_led(5, 3, true);
         vTaskDelay(pdMS_TO_TICKS(5000));
       }
       if (getColor() == "grey"){
-        blink_led(2, 4, false);
+        // blink_led(2, 4, false);
         checkpoint = ponto_atual;
       }
     }
@@ -169,7 +170,7 @@ bool walkByEncoder(long cm, bool flag) {
     }else{
    if (camera_Identify()) continue;
     int16_t target_angle = gyro.getYawAngle(off_angle);
-    pdControl(-target_angle, speed, 28.0, 0, MAX_PWM);
+    pdControl(-target_angle, speed, 8.0, 0, MAX_PWM);
     printRefletanceResult();
     if (getColor() == "black") return true;
     if (!no) break;

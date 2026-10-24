@@ -57,9 +57,9 @@ void printSensorsPure() {
 // GY with offset
 void printSensors() {
   for (uint8_t i = 0; i < 8; i++) {
-    Serial.print(read_sensors(i)), Serial.print("  ");
+    SerialBT.print(read_sensors(i)), SerialBT.print("  ");
   }
-  Serial.println("");
+  SerialBT.println("");
 }
 
 // Reflectance plate 

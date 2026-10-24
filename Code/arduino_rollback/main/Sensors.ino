@@ -93,17 +93,17 @@ const char *getColor()
 
 bool find_blue() {
   return (
-    sensor_values[0] > 320 && sensor_values[0] < 399 && // C9
-    sensor_values[1] > 568 && sensor_values[1] < 623 && // R
-    sensor_values[2] > 618 && sensor_values[2] < 673 && // G
+    sensor_values[0] > 294 && sensor_values[0] < 335 && // C9
+    sensor_values[1] > 610 && sensor_values[1] < 650 && // R
+    sensor_values[2] > 650 && sensor_values[2] < 697 && // G
     abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
 
 bool find_black() { // First parameter calibrated w black tape and second was calibrated w black sticker 
   return (
-    sensor_values[0] > 0 && sensor_values[0] < 10 && // C9
-    sensor_values[1] > 406 && sensor_values[1] < 463 && // R
-    sensor_values[2] > 450 && sensor_values[2] < 498 && // G
+    sensor_values[0] >= 0 && sensor_values[0] < 10 && // C9 0 - 10
+    sensor_values[1] > 446 && sensor_values[1] < 487 && // R 406 - 463
+    sensor_values[2] > 490 && sensor_values[2] < 530 && // G 448 - 490
     abs(gyro.getInclinationAngle()) < 5) ? true : false;
 }
 
@@ -175,7 +175,6 @@ void blink_led(uint8_t repeticoes, uint8_t typeColor, bool side) {
       led.setPixelColor(1, color);
       // led.setPixelColor(2, color);
       // led.setPixelColor(3, color);
-      // led.setPixelColor(ledToBlink[0], color);
       // led.setPixelColor(4, color);
       // led.setPixelColor(5, color);
       led.show();

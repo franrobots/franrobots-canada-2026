@@ -247,9 +247,9 @@ VL53L0X sensors[N_SENSORS];
 
 //                                                0   1   2   3   4   5   6   7
 //                                                0   1   2   3   4   5   6   7
-constexpr int dist_sensors_offsets[N_SENSORS] = {35, 24, 61, 62, 53, 72, 37, 66}; // positivo = aumenta; negativo = subtrai.
+constexpr int dist_sensors_offsets[N_SENSORS] = {44, 27, 60, 65, 50, 77, 47, 80}; // positivo = aumenta; negativo = subtrai.
 // constexpr int dist_sensors_offsets[8] = {28, 30,  47,  57,  30, 38,  110,  70};
-constexpr uint16_t sensors_target_value[] = {50, 360, 640, 920}; // alignTile 1, 2, 3, 4 | 120, 355, 660, 950
+constexpr uint16_t sensors_target_value[] = {55, 330, 640, 920}; // alignTile 1, 2, 3, 4 | 120, 355, 660, 950
 
 // --------------------- EMA Filter -------------------- // 
 int oldEmaGy[N_SENSORS] = {0, 0, 0, 0, 0, 0, 0, 0};

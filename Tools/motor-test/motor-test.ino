@@ -56,15 +56,15 @@ void analog_write(uint8_t channel, uint8_t value) {
 }
 
 void loop() {
-  // moveTank(255, 255, true);
-  analog_write(BACK_0, 255); //  Frente esquerda
-  analog_write(BACK_1, 0); // Trás esquerda
-  analog_write(BACK_2, 0); // Trás direita
-  analog_write(BACK_3, 0); // Frente direita
-  analog_write(FORWARD_0, 0); // Frente esquerda
-  analog_write(FORWARD_1, 0); // Trás esquerda
-  analog_write(FORWARD_2, 0); // Trás direita
-  analog_write(FORWARD_3, 0); // Frente direita
+  moveTank(255, 255, true);
+  // analog_write(BACK_0, 255); //  Frente esquerda
+  // analog_write(BACK_1, 0); // Trás esquerda
+  // analog_write(BACK_2, 0); // Trás direita
+  // analog_write(BACK_3, 0); // Frente direita
+  // analog_write(FORWARD_0, 0); // Frente esquerda
+  // analog_write(FORWARD_1, 0); // Trás esquerda
+  // analog_write(FORWARD_2, 0); // Trás direita
+  // analog_write(FORWARD_3, 0); // Frente direita
 }
 
 int16_t motorValueCorrection(int value) {
